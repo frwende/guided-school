@@ -2670,6 +2670,112 @@ input[type=range]::-webkit-slider-thumb:hover {
   </div>
 </div>
 
+<!-- ╔══════════════════════════════════════════╗ -->
+<!-- ║           CHILD DASHBOARD               ║ -->
+<!-- ╚══════════════════════════════════════════╝ -->
+<div id="child-dashboard" style="position:fixed;inset:0;background:var(--cream);z-index:450;display:none;flex-direction:column;overflow-y:auto;background-image:radial-gradient(ellipse at 15% 55%,rgba(26,51,40,.06) 0%,transparent 55%),radial-gradient(ellipse at 85% 15%,rgba(184,130,42,.07) 0%,transparent 50%)">
+  <div style="max-width:680px;width:100%;margin:0 auto;padding:32px 24px 80px;display:flex;flex-direction:column;gap:28px">
+
+    <!-- Header -->
+    <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap">
+      <button onclick="hideChildDashboard()" style="background:none;border:1.5px solid var(--border);border-radius:10px;padding:8px 14px;font-size:13px;font-weight:600;color:var(--ink3);font-family:'Plus Jakarta Sans',sans-serif;cursor:pointer;flex-shrink:0">← Back</button>
+      <div style="display:flex;align-items:center;gap:14px;flex:1">
+        <div id="cd-av" style="width:52px;height:52px;border-radius:50%;background:var(--forest);color:#fff;display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-size:22px;font-weight:700;flex-shrink:0"></div>
+        <div>
+          <div id="cd-name" style="font-family:'Playfair Display',serif;font-size:24px;font-weight:700;color:var(--forest);letter-spacing:-.3px"></div>
+          <div id="cd-meta" style="font-size:13px;color:var(--ink3);margin-top:2px"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Profile card -->
+    <div style="background:var(--white);border:1.5px solid var(--border);border-radius:20px;padding:24px;box-shadow:0 4px 18px rgba(28,28,28,.06);display:flex;flex-direction:column;gap:16px">
+      <div style="font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--ink4)">Profile</div>
+      <div style="display:flex;flex-wrap:wrap;gap:10px" id="cd-subjects"></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px" id="cd-profile-grid">
+        <div style="background:var(--cream);border-radius:12px;padding:14px">
+          <div style="font-size:11px;font-weight:700;color:var(--ink4);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">School</div>
+          <div id="cd-school" style="font-size:13.5px;font-weight:600;color:var(--ink2)">—</div>
+        </div>
+        <div style="background:var(--cream);border-radius:12px;padding:14px">
+          <div style="font-size:11px;font-weight:700;color:var(--ink4);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">Notes</div>
+          <div id="cd-notes" style="font-size:13px;color:var(--ink3);line-height:1.5">—</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tutor settings card -->
+    <div style="background:var(--white);border:1.5px solid var(--border);border-radius:20px;padding:24px;box-shadow:0 4px 18px rgba(28,28,28,.06);display:flex;flex-direction:column;gap:16px">
+      <div style="display:flex;align-items:center;justify-content:space-between">
+        <div style="font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--ink4)">Tutor Settings</div>
+        <button id="cd-edit-btn" onclick="toggleChildEdit()" style="background:rgba(26,51,40,.07);border:1px solid rgba(26,51,40,.15);border-radius:8px;padding:6px 14px;font-size:12px;font-weight:700;color:var(--forest);font-family:'Plus Jakarta Sans',sans-serif;cursor:pointer">Edit</button>
+      </div>
+
+      <!-- Read view -->
+      <div id="cd-settings-view" style="display:flex;flex-direction:column;gap:8px">
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border)">
+          <span style="font-size:13px;font-weight:600;color:var(--ink3)">Teaching style</span>
+          <span id="cd-style" style="font-size:13px;font-weight:700;color:var(--ink)"></span>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border)">
+          <span style="font-size:13px;font-weight:600;color:var(--ink3)">Learning goal</span>
+          <span id="cd-goal" style="font-size:13px;font-weight:700;color:var(--ink)"></span>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0">
+          <span style="font-size:13px;font-weight:600;color:var(--ink3)">Answer pace</span>
+          <span id="cd-pace" style="font-size:13px;font-weight:700;color:var(--ink)"></span>
+        </div>
+      </div>
+
+      <!-- Edit form -->
+      <div id="cd-settings-edit" style="display:none;flex-direction:column;gap:14px">
+        <div class="frow">
+          <div class="fgroup">
+            <label>Teaching Style</label>
+            <select class="fs" id="cd-edit-style">
+              <option value="socratic">Socratic Guide</option>
+              <option value="stepbystep">Step by Step</option>
+              <option value="friendly">Warm &amp; Patient</option>
+              <option value="challenge">Challenge Mode</option>
+            </select>
+          </div>
+          <div class="fgroup">
+            <label>Learning Goal</label>
+            <select class="fs" id="cd-edit-goal">
+              <option value="critical">Critical Thinking</option>
+              <option value="homework">Homework Help</option>
+              <option value="curiosity">Curiosity &amp; Fun</option>
+            </select>
+          </div>
+        </div>
+        <div class="fgroup">
+          <label>Answer Pace</label>
+          <select class="fs" id="cd-edit-pace">
+            <option value="guided">Guided — step by step</option>
+            <option value="balanced">Balanced</option>
+            <option value="direct">Direct — concise answers</option>
+          </select>
+        </div>
+        <div class="fgroup">
+          <label>Notes for the tutor <span style="color:var(--ink4);font-weight:400">(optional)</span></label>
+          <textarea class="fta" id="cd-edit-notes" placeholder="e.g. Struggles with fractions, loves football examples..."></textarea>
+        </div>
+        <div style="display:flex;gap:10px">
+          <button class="btn-next" onclick="saveChildSettings()" style="flex:1">Save Changes</button>
+          <button class="btn-back" onclick="toggleChildEdit()">Cancel</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Activity -->
+    <div>
+      <div class="dash-section-title">Recent Sessions</div>
+      <div id="cd-activity" class="activity-empty">No sessions yet for this child.</div>
+    </div>
+
+  </div>
+</div>
+
 
 <!-- ╔══════════════════════════════════════════╗ -->
 <!-- ║                 APP                     ║ -->
@@ -3297,10 +3403,79 @@ function renderParentDashboard() {
         ${c.notes?`<div class="child-setting-row"><span class="child-setting-label">Notes</span><span class="child-setting-val" style="font-size:11px;max-width:160px;text-align:right;color:var(--ink3)">${c.notes.slice(0,40)}${c.notes.length>40?'...':''}</span></div>`:''}
       </div>
       <div class="child-card-btns">
-        <button class="btn-edit-child" style="flex:1" onclick="toast('Edit settings coming soon','ok')">Edit Settings</button>
+        <button class="btn-start-child" onclick="showChildDashboard(${i})">Dashboard →</button>
       </div>
     </div>`;
   }).join('');
+}
+
+// ── Child Dashboard ──
+let currentChildIdx = null;
+
+function showChildDashboard(idx) {
+  const child = window.parentData.children[idx];
+  if (!child) return;
+  currentChildIdx = idx;
+  const styleLabels = { socratic:'Socratic Guide', stepbystep:'Step by Step', friendly:'Warm & Patient', challenge:'Challenge Mode' };
+  const goalLabels  = { critical:'Build strong critical thinking', homework:'Homework support', curiosity:'Curiosity & love of learning' };
+  const paceLabels  = { guided:'Guided', balanced:'Balanced', direct:'Direct' };
+  document.getElementById('cd-av').textContent   = child.name[0].toUpperCase();
+  document.getElementById('cd-name').textContent = child.name;
+  document.getElementById('cd-meta').textContent = `${child.age} years old${child.school ? ' · ' + child.school : ''}`;
+  document.getElementById('cd-school').textContent = child.school || 'Not set';
+  document.getElementById('cd-notes').textContent  = child.notes  || 'Nothing added yet';
+  document.getElementById('cd-style').textContent  = styleLabels[child.style] || child.style;
+  document.getElementById('cd-goal').textContent   = goalLabels[child.goal]   || child.goal;
+  document.getElementById('cd-pace').textContent   = paceLabels[child.pace]   || child.pace;
+  const subjects = child.subjects && child.subjects.length ? child.subjects : ['General'];
+  document.getElementById('cd-subjects').innerHTML = subjects.map(s => `<span class="child-subj-tag" style="font-size:12px;padding:4px 12px">${s}</span>`).join('');
+  // Pre-fill edit form
+  document.getElementById('cd-edit-style').value = child.style || 'socratic';
+  document.getElementById('cd-edit-goal').value  = child.goal  || 'critical';
+  document.getElementById('cd-edit-pace').value  = child.pace  || 'balanced';
+  document.getElementById('cd-edit-notes').value = child.notes || '';
+  // Reset to view mode
+  document.getElementById('cd-settings-view').style.display = 'flex';
+  document.getElementById('cd-settings-edit').style.display = 'none';
+  document.getElementById('parent-dashboard').style.display = 'none';
+  document.getElementById('child-dashboard').style.display  = 'flex';
+}
+
+function hideChildDashboard() {
+  document.getElementById('child-dashboard').style.display  = 'none';
+  document.getElementById('parent-dashboard').style.display = 'flex';
+}
+
+function toggleChildEdit() {
+  const view = document.getElementById('cd-settings-view');
+  const edit = document.getElementById('cd-settings-edit');
+  const isEditing = edit.style.display === 'flex';
+  view.style.display = isEditing ? 'flex' : 'none';
+  edit.style.display = isEditing ? 'none' : 'flex';
+  document.getElementById('cd-edit-btn').textContent = isEditing ? 'Edit' : 'Cancel';
+}
+
+function saveChildSettings() {
+  if (currentChildIdx === null) return;
+  const child = window.parentData.children[currentChildIdx];
+  const styleLabels = { socratic:'Socratic Guide', stepbystep:'Step by Step', friendly:'Warm & Patient', challenge:'Challenge Mode' };
+  const goalLabels  = { critical:'Build strong critical thinking', homework:'Homework support', curiosity:'Curiosity & love of learning' };
+  const paceLabels  = { guided:'Guided', balanced:'Balanced', direct:'Direct' };
+  child.style      = document.getElementById('cd-edit-style').value;
+  child.goal       = document.getElementById('cd-edit-goal').value;
+  child.pace       = document.getElementById('cd-edit-pace').value;
+  child.notes      = document.getElementById('cd-edit-notes').value.trim();
+  child.styleLabel = styleLabels[child.style];
+  child.goalLabel  = goalLabels[child.goal];
+  child.paceLabel  = paceLabels[child.pace];
+  // Refresh view
+  document.getElementById('cd-style').textContent = child.styleLabel;
+  document.getElementById('cd-goal').textContent  = child.goalLabel;
+  document.getElementById('cd-pace').textContent  = child.paceLabel;
+  document.getElementById('cd-notes').textContent = child.notes || 'Nothing added yet';
+  toggleChildEdit();
+  renderParentDashboard();
+  toast('Settings saved!', 'ok');
 }
 
 function toggleAddChildPanel() {
@@ -3965,6 +4140,7 @@ function showLoginScreen() {
   document.getElementById('ob').style.display = 'none';
   document.getElementById('ob-student').style.display = 'none';
   document.getElementById('parent-dashboard').style.display = 'none';
+  document.getElementById('child-dashboard').style.display = 'none';
 }
 
 function chooseFamilie() {
