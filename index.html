@@ -2139,6 +2139,24 @@ input[type=range]::-webkit-slider-thumb:hover {
       </div>
     </div>
 
+    <!-- Child code entry screen -->
+    <div id="ob-child-code-screen" style="display:none">
+      <div class="ob-card" style="padding:32px 36px">
+        <div class="ob-step-eyebrow" style="text-align:center;margin-bottom:8px">Family</div>
+        <div class="ob-step-title" style="text-align:center;font-size:22px;margin-bottom:8px">Enter your family code</div>
+        <div class="ob-step-desc" style="text-align:center;margin-bottom:24px">Your parent set up Guided and shared a 6-digit code with you. Enter it below to get started.</div>
+        <div class="fgroup">
+          <label>Family code</label>
+          <input class="fi" id="ob-child-code-input" placeholder="e.g. A3F7K2" maxlength="6" style="text-align:center;font-size:22px;letter-spacing:6px;font-weight:700;text-transform:uppercase"/>
+          <div id="ob-child-code-error" style="color:var(--red);font-size:12px;margin-top:6px;display:none">Incorrect code. Ask your parent for the right one.</div>
+        </div>
+        <button class="btn-next" style="width:100%;margin-top:8px" onclick="submitFamilyCode()">Continue →</button>
+        <div style="text-align:center;margin-top:14px">
+          <button onclick="obFamilyBackToChoice()" style="background:none;border:none;color:var(--ink4);font-size:13px;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif">← Back</button>
+        </div>
+      </div>
+    </div>
+
     <!-- Parent onboarding flow -->
     <div id="ob-parent-flow" style="display:none">
       <div class="ob-card">
@@ -2596,6 +2614,11 @@ input[type=range]::-webkit-slider-thumb:hover {
         <div class="parent-greeting-sub">Manage your children's learning profiles and tutor settings</div>
       </div>
       <div class="parent-dash-actions">
+        <div id="family-code-display" style="background:var(--cream2);border:1.5px solid var(--border);border-radius:12px;padding:8px 16px;text-align:center;display:none">
+          <div style="font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--ink4);margin-bottom:2px">Family Code</div>
+          <div id="family-code-value" style="font-size:20px;font-weight:800;letter-spacing:6px;color:var(--forest);font-family:monospace"></div>
+          <div style="font-size:10px;color:var(--ink4);margin-top:2px">Share this with your child</div>
+        </div>
         <button class="btn-add-child" onclick="toggleAddChildPanel()">+ Add Child</button>
         <button class="btn-logout-parent" onclick="showLoginScreen()">Log out</button>
       </div>
@@ -3293,6 +3316,20 @@ function obFamilyChooseParent() {
 }
 function obFamilyChooseChild() {
   document.getElementById('ob-subchoice').style.display = 'none';
+  document.getElementById('ob-child-code-screen').style.display = 'block';
+  document.getElementById('ob-child-code-input').value = '';
+  document.getElementById('ob-child-code-error').style.display = 'none';
+}
+function obFamilyBackToChoice() {
+  document.getElementById('ob-child-code-screen').style.display = 'none';
+  document.getElementById('ob-subchoice').style.display = 'block';
+}
+function submitFamilyCode() {
+  const entered = document.getElementById('ob-child-code-input').value.trim().toUpperCase();
+  const saved   = localStorage.getItem('guided_family_code');
+  if (!saved) { document.getElementById('ob-child-code-error').style.display = 'block'; document.getElementById('ob-child-code-error').textContent = 'No family account found. Ask your parent to set up Guided first.'; return; }
+  if (entered !== saved) { document.getElementById('ob-child-code-error').style.display = 'block'; document.getElementById('ob-child-code-error').textContent = 'Incorrect code. Ask your parent for the right one.'; return; }
+  document.getElementById('ob-child-code-screen').style.display = 'none';
   document.getElementById('ob-child-flow').style.display = 'block';
   obChildStep = 1; renderObChild();
 }
@@ -3383,8 +3420,15 @@ function launchParentDashboard() {
   const goal  = selGoal  ? selGoal.dataset.g  : 'critical';
   const style = selStyle ? selStyle.dataset.s : 'socratic';
   const pace  = selPace  ? selPace.dataset.p  : 'balanced';
+  // Generate family code if not already set
+  let familyCode = localStorage.getItem('guided_family_code');
+  if (!familyCode) {
+    familyCode = Math.random().toString(36).substring(2,8).toUpperCase();
+    localStorage.setItem('guided_family_code', familyCode);
+  }
   window.parentData = {
     name: parentName,
+    familyCode,
     children: [{ name:childName, age:childAge, school:childSchool, notes:childNotes, goal, style, pace, subjects:[],
       goalLabel:goalMap[goal], styleLabel:styleLabels[style], paceLabel:paceLabels[pace], addedAt:Date.now() }]
   };
@@ -3398,6 +3442,11 @@ function showParentDashboard() {
   const greeting = hour<12 ? 'Good morning' : hour<18 ? 'Good afternoon' : 'Good evening';
   const name = window.parentData ? window.parentData.name : '';
   document.getElementById('pd-greeting').textContent = `${greeting}${name ? ', '+name : ''}`;
+  const code = window.parentData && window.parentData.familyCode;
+  if (code) {
+    document.getElementById('family-code-value').textContent = code;
+    document.getElementById('family-code-display').style.display = 'block';
+  }
   renderParentDashboard();
 }
 
