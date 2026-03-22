@@ -2800,7 +2800,7 @@ input[type=range]::-webkit-slider-thumb:hover {
       Guided
     </div>
     <div class="nav-tab active" id="tab-s" onclick="switchView('student')">Student</div>
-    <div class="nav-tab" id="tab-p" onclick="switchView('parent')">
+    <div class="nav-tab" id="tab-p" onclick="switchView('parent')" style="display:none">
       Parent Dashboard
       <span class="nav-tab-badge" id="dash-badge">Live</span>
     </div>
@@ -3547,6 +3547,7 @@ function launchFromDashboard(idx) {
   S.subj         = (child.subjects&&child.subjects.length) ? child.subjects.join(', ') : 'General / Mixed';
   S.goal         = child.goalLabel || child.goal;
   S.sessionStart = Date.now();
+  S.userType = 'parent-child';
   document.getElementById('parent-dashboard').style.display = 'none';
   startAppSession();
 }
@@ -3566,6 +3567,7 @@ function launchChild() {
   S.learningGoal = 'critical';
   S.goal         = 'Build strong critical thinking';
   S.sessionStart = Date.now();
+  S.userType = 'parent-child';
   document.getElementById('ob').style.display = 'none';
   startAppSession();
 }
@@ -3592,6 +3594,7 @@ function launchStudent() {
   S.goal         = goalMap[S.learningGoal];
   S.notes        = [langs&&'Languages: '+langs, hobbies&&'Hobbies: '+hobbies, 'Learns best by: '+(selLS?selLS.dataset.ls:'visual'), struggles&&'Struggles with: '+struggles].filter(Boolean).join('. ');
   S.sessionStart = Date.now();
+  S.userType = 'solo';
   document.getElementById('ob-student').style.display = 'none';
   startAppSession();
 }
@@ -3613,6 +3616,15 @@ function startAppSession() {
   document.getElementById('d-updates').textContent = S.parentUpdates || '—';
   const styleLabels = { socratic:'Socratic Guide', stepbystep:'Step by Step', friendly:'Warm & Patient', challenge:'Challenge Mode' };
   document.getElementById('d-style').textContent = styleLabels[S.style] || S.style || '—';
+  // Tab visibility based on user type
+  const tabP = document.getElementById('tab-p');
+  if (S.userType === 'solo') {
+    tabP.style.display = '';
+    tabP.innerHTML = 'My Progress <span class="nav-tab-badge" id="dash-badge">Live</span>';
+  } else if (S.userType === 'parent-child' || S.userType === 'school') {
+    tabP.style.display = 'none';
+  }
+
   buildStarters();
   const curriculumUrl = S.schoolCurriculum || SUBJECT_URLS[S.subj];
   if (curriculumUrl) {
@@ -4355,6 +4367,7 @@ function launchAsSchoolStudent(student) {
   S.style  = student.style || 'socratic';
   S.learningGoal  = student.goal || 'critical';
   S.parentUpdates = 'monthly';
+  S.userType      = 'school';
   S.sessionStart  = Date.now();
   const goalMap = {
     critical: 'Build strong critical thinking and reasoning skills',
