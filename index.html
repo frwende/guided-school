@@ -2298,9 +2298,218 @@ body { background: #FFFFFF; }
   transform: translateY(-3px);
   box-shadow: 0 10px 32px rgba(0,0,0,.1);
 }
+
+/* ══════════════════════════════════════════════
+   LANDING PAGE
+══════════════════════════════════════════════ */
+#landing { background: #ECECEC; font-family: var(--font-body); }
+
+/* Nav */
+.lp-nav {
+  display: flex; align-items: center;
+  padding: 0 40px; height: 64px;
+  background: #ECECEC; flex-shrink: 0; gap: 32px;
+}
+.lp-nav-logo {
+  display: flex; align-items: center; gap: 10px;
+  font-family: var(--font-serif); font-size: 20px; font-weight: 700;
+  color: var(--ink); flex-shrink: 0; text-decoration: none;
+}
+.lp-nav-mark {
+  width: 34px; height: 34px; border-radius: 10px;
+  background: var(--btn-gradient);
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 4px 14px rgba(26,51,40,.28); flex-shrink: 0;
+}
+.lp-nav-links { display: flex; gap: 28px; flex: 1; justify-content: center; }
+.lp-nav-links a {
+  font-size: 14px; font-weight: 500; color: #666;
+  text-decoration: none; transition: color .15s;
+}
+.lp-nav-links a:hover { color: #111; }
+.lp-nav-actions { display: flex; align-items: center; gap: 10px; }
+.lp-signin {
+  background: none; border: none; font-size: 14px; font-weight: 500;
+  color: #666; cursor: pointer; padding: 8px 14px;
+  font-family: var(--font-body); transition: color .15s; border-radius: 8px;
+}
+.lp-signin:hover { color: #111; }
+.lp-cta {
+  background: var(--forest); color: #fff; border: none; border-radius: 100px;
+  padding: 10px 22px; font-size: 14px; font-weight: 600;
+  cursor: pointer; font-family: var(--font-body);
+  box-shadow: 0 4px 16px rgba(26,51,40,.28);
+  transition: all .2s cubic-bezier(.16,1,.3,1);
+}
+.lp-cta:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(26,51,40,.36); background: var(--forest2); }
+
+/* Hero card */
+.lp-hero {
+  flex: 1; margin: 0 20px 20px;
+  background: #F8F8F8; border-radius: 24px;
+  position: relative; overflow: hidden;
+  display: flex; align-items: center; justify-content: center;
+  background-image: radial-gradient(circle at 1px 1px, #CECECE 1px, transparent 0);
+  background-size: 28px 28px;
+}
+
+/* Hero copy */
+.lp-hero-copy {
+  text-align: center; position: relative; z-index: 2;
+  max-width: 600px; padding: 40px 24px;
+  animation: fadeUp .7s cubic-bezier(.16,1,.3,1) both;
+}
+.lp-eyebrow {
+  display: inline-block; background: rgba(26,51,40,.08);
+  color: var(--forest2); border: 1px solid rgba(26,51,40,.14);
+  border-radius: 100px; padding: 5px 16px;
+  font-size: 12.5px; font-weight: 600; letter-spacing: .4px;
+  margin-bottom: 26px;
+}
+.lp-h1 {
+  font-family: var(--font-body); font-size: clamp(48px, 5.5vw, 74px);
+  font-weight: 800; line-height: 1.05; letter-spacing: -2.5px;
+  color: #111; margin-bottom: 22px;
+}
+.lp-h1-muted { color: #C0C0C0; }
+.lp-sub {
+  font-size: 16.5px; color: #777; line-height: 1.7;
+  max-width: 440px; margin: 0 auto 36px; font-weight: 400;
+}
+.lp-hero-btns { display: flex; align-items: center; gap: 12px; justify-content: center; }
+.lp-cta-hero { padding: 14px 34px !important; font-size: 15px !important; box-shadow: 0 6px 24px rgba(26,51,40,.32) !important; }
+.lp-ghost {
+  background: none; border: 1.5px solid #CECECE; border-radius: 100px;
+  padding: 13px 26px; font-size: 15px; font-weight: 500; color: #666;
+  cursor: pointer; font-family: var(--font-body); transition: all .2s;
+}
+.lp-ghost:hover { border-color: #999; color: #111; }
+
+/* Floating cards */
+.lp-card {
+  position: absolute; background: #FFFFFF; border-radius: 18px;
+  padding: 16px 18px; box-shadow: 0 8px 32px rgba(0,0,0,.1), 0 2px 8px rgba(0,0,0,.06);
+  min-width: 178px; z-index: 1;
+}
+.lp-card-label {
+  font-size: 9.5px; font-weight: 700; letter-spacing: 1.3px;
+  text-transform: uppercase; color: #BBB; margin-bottom: 10px;
+}
+.lp-card-1 { left: 5%; top: 16%; --rot: -4deg; animation: lp-float 6s ease-in-out infinite; }
+.lp-card-2 { right: 5%; top: 10%; --rot: 3deg; animation: lp-float 6s ease-in-out infinite; animation-delay: 1.5s; }
+.lp-card-3 { left: 4%; bottom: 12%; --rot: 2deg; animation: lp-float 6s ease-in-out infinite; animation-delay: 3s; }
+.lp-card-4 { right: 4%; bottom: 10%; --rot: -3deg; animation: lp-float 6s ease-in-out infinite; animation-delay: 4.5s; }
+@keyframes lp-float {
+  0%,100% { transform: translateY(0px) rotate(var(--rot,0deg)); }
+  50%      { transform: translateY(-9px) rotate(var(--rot,0deg)); }
+}
+
+/* Card 1: chat */
+.lp-mini-bubble {
+  border-radius: 12px; padding: 8px 12px; font-size: 12px; line-height: 1.45;
+  margin-bottom: 6px; max-width: 172px; display: block;
+}
+.lp-mini-ai  { background: #F7F6F3; border: 1px solid #EEEBE5; color: #333; }
+.lp-mini-user{ background: linear-gradient(150deg,#1E3D2F,#2E5C44); color: #fff; margin-left: auto; }
+
+/* Card 2: score */
+.lp-score-big { font-family: var(--font-serif); font-size: 40px; font-weight: 700; color: var(--forest); line-height: 1; }
+.lp-score-bar { height: 5px; background: #EEE; border-radius: 3px; margin: 9px 0 7px; overflow: hidden; }
+.lp-score-fill { height: 100%; background: linear-gradient(150deg,#1E3D2F,#2E5C44); border-radius: 3px; }
+.lp-score-sub { font-size: 11.5px; color: #10b981; font-weight: 600; }
+
+/* Card 3: bloom */
+.lp-bloom-row { display: flex; align-items: center; gap: 8px; font-size: 13px; color: #444; margin-bottom: 7px; font-weight: 500; }
+.lp-bloom-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+
+/* Card 4: stats */
+.lp-stat-row { display: flex; justify-content: space-between; align-items: center; font-size: 12.5px; margin-bottom: 7px; color: #666; }
+.lp-stat-row strong { color: #111; font-weight: 700; }
+
+/* Footer */
+.lp-footer { text-align: center; padding: 12px; font-size: 13px; color: #AAA; flex-shrink: 0; }
 </style>
 </head>
 <body>
+
+<!-- ╔══════════════════════════════════════════╗ -->
+<!-- ║            LANDING PAGE                 ║ -->
+<!-- ╚══════════════════════════════════════════╝ -->
+<div id="landing" style="position:fixed;inset:0;z-index:500;display:flex;flex-direction:column;overflow:hidden;">
+
+  <!-- Nav -->
+  <nav class="lp-nav">
+    <div class="lp-nav-logo">
+      <div class="lp-nav-mark">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/>
+          <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+        </svg>
+      </div>
+      <span>Guided</span>
+    </div>
+    <div class="lp-nav-links">
+      <a href="#">How it works</a>
+      <a href="#">For Schools</a>
+      <a href="#">For Families</a>
+    </div>
+    <div class="lp-nav-actions">
+      <button class="lp-signin" onclick="showLoginFromLanding()">Sign in</button>
+      <button class="lp-cta" onclick="showLoginFromLanding()">Get started →</button>
+    </div>
+  </nav>
+
+  <!-- Hero card -->
+  <div class="lp-hero">
+
+    <!-- Floating card 1: Chat preview -->
+    <div class="lp-card lp-card-1">
+      <div class="lp-card-label">AI Tutor</div>
+      <div class="lp-mini-bubble lp-mini-ai">What's the Pythagorean theorem?</div>
+      <div class="lp-mini-bubble lp-mini-user">a² + b² = c² ✓</div>
+    </div>
+
+    <!-- Floating card 2: Independence score -->
+    <div class="lp-card lp-card-2">
+      <div class="lp-card-label">Independence Score</div>
+      <div class="lp-score-big">87</div>
+      <div class="lp-score-bar"><div class="lp-score-fill" style="width:87%"></div></div>
+      <div class="lp-score-sub">↑ 12 pts this week</div>
+    </div>
+
+    <!-- Floating card 3: Bloom levels -->
+    <div class="lp-card lp-card-3">
+      <div class="lp-card-label">Thinking Level</div>
+      <div class="lp-bloom-row"><span class="lp-bloom-dot" style="background:#6366f1"></span>Analyze</div>
+      <div class="lp-bloom-row"><span class="lp-bloom-dot" style="background:#10b981"></span>Understand</div>
+      <div class="lp-bloom-row"><span class="lp-bloom-dot" style="background:#f59e0b"></span>Apply</div>
+    </div>
+
+    <!-- Floating card 4: Session stats -->
+    <div class="lp-card lp-card-4">
+      <div class="lp-card-label">Today's Session</div>
+      <div class="lp-stat-row"><span>Questions</span><strong>14</strong></div>
+      <div class="lp-stat-row"><span>Hints used</span><strong>2</strong></div>
+      <div class="lp-stat-row"><span>Aha moments ✨</span><strong>3</strong></div>
+    </div>
+
+    <!-- Hero copy -->
+    <div class="lp-hero-copy">
+      <div class="lp-eyebrow">AI-Powered Tutoring</div>
+      <h1 class="lp-h1">Learn smarter,<br><span class="lp-h1-muted">not harder</span></h1>
+      <p class="lp-sub">Guided is a Socratic AI tutor that builds real understanding — not just answers — for students aged 8–18.</p>
+      <div class="lp-hero-btns">
+        <button class="lp-cta lp-cta-hero" onclick="showLoginFromLanding()">Get started free →</button>
+        <button class="lp-ghost" onclick="showLoginFromLanding()">Sign in</button>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Footer -->
+  <div class="lp-footer">Used by students in 🇩🇪 🇬🇧 🇺🇸</div>
+
+</div>
 
 <!-- ╔══════════════════════════════════════════╗ -->
 <!-- ║            SETUP SCREEN                 ║ -->
@@ -5258,13 +5467,22 @@ function showSetupScreen() {
   document.getElementById('setup-screen').style.display = 'flex';
 }
 
-// ── On page load: check for API keys, then show login ───
+// ── Show login/setup after dismissing landing page ───
+function showLoginFromLanding() {
+  document.getElementById('landing').style.display = 'none';
+  if (!localStorage.getItem('guided_featherless_key')) {
+    document.getElementById('setup-screen').style.display = 'flex';
+  } else {
+    document.getElementById('login-screen').style.display = 'flex';
+  }
+}
+
+// ── On page load: always show landing page first ───
 (function() {
   document.getElementById('ob').style.display = 'none';
-  if (!localStorage.getItem('guided_featherless_key')) {
-    document.getElementById('login-screen').style.display = 'none';
-    document.getElementById('setup-screen').style.display = 'flex';
-  }
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('setup-screen').style.display = 'none';
+  // landing page is visible by default (no display:none on it)
 })();
 
 function fillInput(t) { const el = document.getElementById('minput'); el.value = t; el.focus(); autoResize(el); }
