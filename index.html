@@ -1622,12 +1622,12 @@ input[type=range]::-webkit-slider-thumb:hover {
     radial-gradient(ellipse at 70% 90%, rgba(26,51,40,.04) 0%, transparent 45%);
 }
 
-.login-container { width: 100%; max-width: 480px; display: flex; flex-direction: column; gap: 24px; }
+.login-container { width: 100%; max-width: 560px; display: flex; flex-direction: column; gap: 24px; }
 
 .login-type-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
   animation: fadeUp .6s .08s cubic-bezier(.16,1,.3,1) both;
 }
 
@@ -1765,6 +1765,91 @@ input[type=range]::-webkit-slider-thumb:hover {
   display: inline-flex; align-items: center; gap: 8px;
 }
 .code-val { font-family: monospace; font-size: 16px; letter-spacing: 3px; }
+
+/* ══════════════════════════════════════════════
+   FAMILY ONBOARDING REDESIGN + NEW SCREENS
+══════════════════════════════════════════════ */
+.path-choice-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 16px; margin-top: 20px;
+  animation: fadeUp .4s cubic-bezier(.16,1,.3,1) both;
+}
+.path-choice-card {
+  background: var(--white); border: 2px solid var(--border);
+  border-radius: 20px; padding: 26px 18px;
+  cursor: pointer; transition: all .25s cubic-bezier(.16,1,.3,1);
+  display: flex; flex-direction: column; align-items: center;
+  gap: 10px; text-align: center;
+  box-shadow: 0 4px 16px rgba(28,28,28,.06);
+}
+.path-choice-card:hover { border-color: var(--forest); transform: translateY(-3px); box-shadow: 0 10px 28px rgba(26,51,40,.12); }
+.path-choice-icon { font-size: 30px; width: 56px; height: 56px; display: flex; align-items: center; justify-content: center; background: var(--cream); border-radius: 16px; border: 1px solid var(--border); }
+.path-choice-name { font-family: 'Playfair Display', serif; font-size: 16px; font-weight: 700; color: var(--forest); }
+.path-choice-desc { font-size: 11.5px; color: var(--ink3); line-height: 1.5; }
+
+.subject-chips { display: flex; flex-wrap: wrap; gap: 7px; }
+.subject-chip { padding: 6px 13px; border-radius: 20px; border: 1.5px solid var(--border); background: var(--white); font-size: 12px; font-weight: 600; color: var(--ink3); cursor: pointer; transition: all .15s; user-select: none; }
+.subject-chip.sel { background: var(--forest); border-color: var(--forest); color: #fff; }
+
+.learn-style-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.learn-style-card { background: var(--white); border: 2px solid var(--border); border-radius: 14px; padding: 14px 12px; cursor: pointer; transition: all .2s; text-align: center; display: flex; flex-direction: column; gap: 4px; }
+.learn-style-card.sel { border-color: var(--forest); background: rgba(26,51,40,.04); }
+.learn-style-card:hover { border-color: var(--forest); }
+.learn-style-emoji { font-size: 22px; }
+.learn-style-name { font-size: 12px; font-weight: 700; color: var(--ink); }
+.learn-style-desc { font-size: 10.5px; color: var(--ink4); line-height: 1.4; }
+
+.pace-options { display: flex; flex-direction: column; gap: 8px; }
+.pace-opt { display: flex; align-items: flex-start; gap: 12px; padding: 12px 14px; border: 1.5px solid var(--border); border-radius: 12px; cursor: pointer; background: var(--white); transition: all .15s; }
+.pace-opt.sel { border-color: var(--forest); background: rgba(26,51,40,.03); }
+.pace-opt:hover { border-color: var(--forest); }
+.pace-radio { width: 18px; height: 18px; border-radius: 50%; border: 2px solid var(--border2); flex-shrink: 0; margin-top: 2px; transition: all .15s; }
+.pace-opt.sel .pace-radio { border-color: var(--forest); background: var(--forest); box-shadow: inset 0 0 0 3px white; }
+.pace-opt-name { font-size: 13px; font-weight: 700; color: var(--ink); }
+.pace-opt-desc { font-size: 11.5px; color: var(--ink3); margin-top: 2px; line-height: 1.45; }
+
+/* ── Parent Dashboard ──────────────────────── */
+#parent-dashboard { position: fixed; inset: 0; background: var(--cream); z-index: 400; display: none; flex-direction: column; overflow-y: auto; background-image: radial-gradient(ellipse at 15% 55%, rgba(26,51,40,.06) 0%, transparent 55%), radial-gradient(ellipse at 85% 15%, rgba(184,130,42,.07) 0%, transparent 50%); }
+.parent-dash-wrap { max-width: 700px; width: 100%; margin: 0 auto; padding: 36px 24px 80px; display: flex; flex-direction: column; gap: 32px; }
+.parent-dash-header { display: flex; align-items: flex-start; justify-content: space-between; flex-wrap: wrap; gap: 16px; animation: fadeUp .5s cubic-bezier(.16,1,.3,1) both; }
+.parent-greeting { font-family: 'Playfair Display', serif; font-size: 28px; font-weight: 700; color: var(--forest); letter-spacing: -.4px; }
+.parent-greeting-sub { font-size: 13px; color: var(--ink3); margin-top: 5px; }
+.parent-dash-actions { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+.btn-add-child { background: var(--forest); color: #fff; border: none; border-radius: 12px; padding: 10px 18px; font-size: 13px; font-weight: 700; font-family: 'Plus Jakarta Sans', sans-serif; cursor: pointer; transition: all .2s; }
+.btn-add-child:hover { background: #153d2e; transform: translateY(-1px); }
+.btn-logout-parent { background: none; border: 1.5px solid var(--border); border-radius: 12px; padding: 9px 16px; font-size: 13px; font-weight: 600; color: var(--ink3); font-family: 'Plus Jakarta Sans', sans-serif; cursor: pointer; transition: all .15s; }
+.btn-logout-parent:hover { border-color: var(--red); color: var(--red); }
+.child-cards-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px; }
+.child-card { background: var(--white); border: 1.5px solid var(--border); border-radius: 20px; padding: 22px; box-shadow: 0 4px 18px rgba(28,28,28,.06); display: flex; flex-direction: column; gap: 16px; transition: all .2s; animation: fadeUp .4s cubic-bezier(.16,1,.3,1) both; }
+.child-card:hover { border-color: rgba(26,51,40,.25); box-shadow: 0 8px 28px rgba(28,28,28,.1); }
+.child-card-top { display: flex; align-items: center; gap: 14px; }
+.child-card-av { width: 48px; height: 48px; border-radius: 50%; background: var(--forest); color: #fff; display: flex; align-items: center; justify-content: center; font-family: 'Playfair Display', serif; font-size: 20px; font-weight: 700; flex-shrink: 0; }
+.child-card-name { font-size: 16px; font-weight: 700; color: var(--ink); }
+.child-card-meta { font-size: 12px; color: var(--ink3); margin-top: 2px; line-height: 1.5; }
+.child-subj-tags { display: flex; flex-wrap: wrap; gap: 5px; }
+.child-subj-tag { background: var(--cream2); border: 1px solid var(--border); border-radius: 20px; padding: 3px 10px; font-size: 11px; font-weight: 600; color: var(--ink3); }
+.child-card-settings { background: var(--cream); border-radius: 12px; padding: 12px 14px; display: flex; flex-direction: column; gap: 6px; }
+.child-setting-row { display: flex; justify-content: space-between; align-items: center; }
+.child-setting-label { font-size: 11.5px; color: var(--ink4); font-weight: 600; }
+.child-setting-val { font-size: 11.5px; color: var(--ink2); font-weight: 700; }
+.child-card-btns { display: flex; gap: 8px; }
+.btn-start-child { flex: 1; background: var(--forest); color: #fff; border: none; border-radius: 10px; padding: 10px; font-size: 12.5px; font-weight: 700; font-family: 'Plus Jakarta Sans', sans-serif; cursor: pointer; transition: all .15s; }
+.btn-start-child:hover { background: #153d2e; }
+.btn-edit-child { background: var(--cream2); border: 1.5px solid var(--border); border-radius: 10px; padding: 10px 14px; font-size: 12.5px; font-weight: 600; color: var(--ink2); font-family: 'Plus Jakarta Sans', sans-serif; cursor: pointer; transition: all .15s; }
+.btn-edit-child:hover { border-color: var(--forest); color: var(--forest); }
+.dash-section-title { font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--ink4); margin-bottom: 12px; }
+.activity-feed { display: flex; flex-direction: column; gap: 10px; }
+.activity-item { background: var(--white); border: 1px solid var(--border); border-radius: 14px; padding: 14px 18px; display: flex; align-items: center; gap: 14px; box-shadow: var(--shadow-sm); }
+.activity-av { width: 36px; height: 36px; border-radius: 50%; background: rgba(26,51,40,.1); color: var(--forest); display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 700; flex-shrink: 0; font-family: 'Playfair Display', serif; }
+.activity-body { flex: 1; }
+.activity-text { font-size: 13px; color: var(--ink2); line-height: 1.5; }
+.activity-text strong { color: var(--ink); }
+.activity-time { font-size: 11px; color: var(--ink4); margin-top: 2px; }
+.activity-empty { text-align: center; padding: 32px; background: var(--white); border: 1.5px dashed var(--border); border-radius: 14px; color: var(--ink4); font-size: 13.5px; }
+.add-child-panel { background: var(--white); border: 1.5px solid var(--border); border-radius: 20px; padding: 24px; box-shadow: var(--shadow-sm); display: none; flex-direction: column; gap: 16px; }
+
+/* ── Student personal use onboarding ─────── */
+#ob-student { position: fixed; inset: 0; background: var(--cream); z-index: 400; display: none; align-items: center; justify-content: center; padding: 24px; overflow-y: auto; background-image: radial-gradient(ellipse at 15% 55%, rgba(26,51,40,.07) 0%, transparent 55%), radial-gradient(ellipse at 85% 15%, rgba(184,130,42,.08) 0%, transparent 50%); }
 </style>
 </head>
 <body>
@@ -1789,12 +1874,17 @@ input[type=range]::-webkit-slider-thumb:hover {
       <div class="login-type-card" onclick="chooseFamilie()">
         <div class="login-type-icon">🏠</div>
         <div class="login-type-name">Family</div>
-        <div class="login-type-desc">Parents set up Guided for their child — personalized by age, school, and learning goal</div>
+        <div class="login-type-desc">Parents set up a personalised tutor for their child — with a full dashboard</div>
       </div>
       <div class="login-type-card" onclick="chooseSchule()">
         <div class="login-type-icon">🏫</div>
         <div class="login-type-name">School</div>
         <div class="login-type-desc">Schools manage student accounts and give each child their own access</div>
+      </div>
+      <div class="login-type-card" onclick="chooseStudent()">
+        <div class="login-type-icon">🎓</div>
+        <div class="login-type-name">Student</div>
+        <div class="login-type-desc">Using Guided for yourself? Build your own personal AI tutor in minutes</div>
       </div>
     </div>
   </div>
@@ -1965,7 +2055,7 @@ input[type=range]::-webkit-slider-thumb:hover {
 </div>
 
 <!-- ╔══════════════════════════════════════════╗ -->
-<!-- ║            ONBOARDING                   ║ -->
+<!-- ║         FAMILY ONBOARDING               ║ -->
 <!-- ╚══════════════════════════════════════════╝ -->
 <div id="ob">
   <div class="ob-container">
@@ -1981,151 +2071,563 @@ input[type=range]::-webkit-slider-thumb:hover {
       <span class="ob-tagline">The AI tutor that builds real thinking skills</span>
     </div>
 
+    <!-- Sub-choice: parent or child -->
+    <div id="ob-subchoice">
+      <div class="ob-card" style="padding:32px 36px">
+        <div class="ob-step-eyebrow" style="text-align:center;margin-bottom:8px">Family</div>
+        <div class="ob-step-title" style="text-align:center;font-size:22px;margin-bottom:8px">Who are you?</div>
+        <div class="ob-step-desc" style="text-align:center">Choose your path to get started.</div>
+        <div class="path-choice-grid">
+          <div class="path-choice-card" onclick="obFamilyChooseParent()">
+            <div class="path-choice-icon">👨‍👩‍👧</div>
+            <div class="path-choice-name">I'm a Parent</div>
+            <div class="path-choice-desc">Set up a personalised tutor for your child and manage everything from your dashboard</div>
+          </div>
+          <div class="path-choice-card" onclick="obFamilyChooseChild()">
+            <div class="path-choice-icon">🧒</div>
+            <div class="path-choice-name">I'm a Child</div>
+            <div class="path-choice-desc">Log in and personalise your own learning experience</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Parent onboarding flow -->
+    <div id="ob-parent-flow" style="display:none">
+      <div class="ob-card">
+        <div class="ob-progress-track">
+          <div class="ob-progress-fill" id="ob-p-prog" style="width:33%"></div>
+        </div>
+
+        <!-- P1: Parent info -->
+        <div class="ob-step active" id="ob-p1">
+          <div class="ob-step-eyebrow">Step 1 of 3</div>
+          <div class="ob-step-title">Your account</div>
+          <div class="ob-step-desc">Just your name to get started — we'll add your child's details next.</div>
+          <div class="fgroup">
+            <label>Your name</label>
+            <input class="fi" id="ob-p-name" placeholder="e.g. Sarah"/>
+          </div>
+          <div class="fgroup">
+            <label>Your email <span style="color:var(--ink4);font-weight:400">(optional for now)</span></label>
+            <input class="fi" id="ob-p-email" type="email" placeholder="sarah@example.com"/>
+          </div>
+        </div>
+
+        <!-- P2: Child profile -->
+        <div class="ob-step" id="ob-p2">
+          <div class="ob-step-eyebrow">Step 2 of 3</div>
+          <div class="ob-step-title">Tell us about your child</div>
+          <div class="ob-step-desc">We'll personalise every response — vocabulary, examples, and difficulty all adapt to them.</div>
+          <div class="fgroup">
+            <label>Your child's name</label>
+            <input class="fi" id="ob-p-child-name" placeholder="e.g. Max"/>
+          </div>
+          <div class="fgroup">
+            <label>How old is your child?</label>
+            <div class="age-slider-wrap">
+              <div class="age-display">
+                <span class="age-num" id="ob-p-age-display">12</span>
+                <span class="age-unit">years old</span>
+              </div>
+              <input type="range" id="ob-p-age" min="6" max="18" value="12" oninput="updateAgeSliderP(this.value)"/>
+              <div class="age-labels"><span>6</span><span>9</span><span>12</span><span>15</span><span>18</span></div>
+            </div>
+          </div>
+          <div class="fgroup">
+            <label>Which school does your child go to? <span style="color:var(--ink4);font-weight:400">(optional)</span></label>
+            <div class="school-wrap">
+              <input class="fi" id="ob-p-school" placeholder="e.g. Goethe-Gymnasium Berlin, St Mary's London..." oninput="debounceSchoolP(this.value)"/>
+              <div class="school-status" id="ob-p-school-status"></div>
+            </div>
+          </div>
+          <div class="fgroup">
+            <label>Anything the tutor should know? <span style="color:var(--ink4);font-weight:400">(optional)</span></label>
+            <textarea class="fta" id="ob-p-notes" placeholder="e.g. Gets frustrated quickly, loves football analogies, dyslexic, prefers short answers..."></textarea>
+          </div>
+        </div>
+
+        <!-- P3: Goals + Style + Pace -->
+        <div class="ob-step" id="ob-p3">
+          <div class="ob-step-eyebrow">Step 3 of 3</div>
+          <div class="ob-step-title">Tutor settings</div>
+          <div class="ob-step-desc">Shape how the tutor teaches your child. You can always change this later.</div>
+          <div class="fgroup">
+            <label>Learning Goal</label>
+            <div class="goal-chips" id="p-goal-chips">
+              <div class="goal-chip sel" data-g="critical" onclick="pickGoalP(this)">
+                <div class="goal-chip-check"></div>
+                <div class="goal-chip-body">
+                  <div class="goal-chip-name">🧠 Strong critical thinking</div>
+                  <div class="goal-chip-desc">Build the ability to reason, analyze, and solve problems independently</div>
+                </div>
+              </div>
+              <div class="goal-chip" data-g="homework" onclick="pickGoalP(this)">
+                <div class="goal-chip-check"></div>
+                <div class="goal-chip-body">
+                  <div class="goal-chip-name">📚 Homework support</div>
+                  <div class="goal-chip-desc">Get unstuck on assignments and understand the material well enough to work alone next time</div>
+                </div>
+              </div>
+              <div class="goal-chip" data-g="curiosity" onclick="pickGoalP(this)">
+                <div class="goal-chip-check"></div>
+                <div class="goal-chip-body">
+                  <div class="goal-chip-name">✨ Curiosity &amp; love of learning</div>
+                  <div class="goal-chip-desc">Spark genuine wonder and keep the child naturally curious</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="fgroup" style="margin-top:4px">
+            <label>Teaching Style</label>
+            <div class="style-grid" id="p-style-grid">
+              <div class="style-card sel" data-s="socratic" onclick="pickStyleP(this)">
+                <span class="style-emoji">🧠</span>
+                <div class="style-name">Socratic Guide</div>
+                <div class="style-desc">Explains then asks questions — the student thinks their way to the answer</div>
+              </div>
+              <div class="style-card" data-s="stepbystep" onclick="pickStyleP(this)">
+                <span class="style-emoji">📐</span>
+                <div class="style-name">Step by Step</div>
+                <div class="style-desc">Breaks everything into tiny pieces, confirms understanding at each stage</div>
+              </div>
+              <div class="style-card" data-s="friendly" onclick="pickStyleP(this)">
+                <span class="style-emoji">🌱</span>
+                <div class="style-name">Warm &amp; Patient</div>
+                <div class="style-desc">Very encouraging, everyday analogies, perfect for anxious learners</div>
+              </div>
+              <div class="style-card" data-s="challenge" onclick="pickStyleP(this)">
+                <span class="style-emoji">🎯</span>
+                <div class="style-name">Challenge Mode</div>
+                <div class="style-desc">High standards, no hand-holding, pushes hard thinking</div>
+              </div>
+            </div>
+          </div>
+          <div class="fgroup" style="margin-top:4px">
+            <label>Answer Pace</label>
+            <div class="pace-options" id="p-pace-options">
+              <div class="pace-opt sel" data-p="guided" onclick="pickPaceP(this)">
+                <div class="pace-radio"></div>
+                <div>
+                  <div class="pace-opt-name">Guided — step by step</div>
+                  <div class="pace-opt-desc">The tutor breaks down each answer slowly, checking understanding at every stage</div>
+                </div>
+              </div>
+              <div class="pace-opt" data-p="balanced" onclick="pickPaceP(this)">
+                <div class="pace-radio"></div>
+                <div>
+                  <div class="pace-opt-name">Balanced</div>
+                  <div class="pace-opt-desc">Clear explanations with follow-up questions — a natural conversation pace</div>
+                </div>
+              </div>
+              <div class="pace-opt" data-p="direct" onclick="pickPaceP(this)">
+                <div class="pace-radio"></div>
+                <div>
+                  <div class="pace-opt-name">Direct — concise answers</div>
+                  <div class="pace-opt-desc">Gets to the point quickly, suitable for confident or advanced learners</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Nav -->
+        <div class="ob-nav">
+          <div class="step-dots">
+            <div class="sdot cur" id="pd1"></div>
+            <div class="sdot" id="pd2"></div>
+            <div class="sdot" id="pd3"></div>
+          </div>
+          <button class="btn-back" id="ob-p-back" onclick="obParentBack()" style="display:none">← Back</button>
+          <button class="btn-next" id="ob-p-next" onclick="obParentNext()">Continue →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Child login flow -->
+    <div id="ob-child-flow" style="display:none">
+      <div class="ob-card">
+        <div class="ob-progress-track">
+          <div class="ob-progress-fill" id="ob-c-prog" style="width:50%"></div>
+        </div>
+
+        <!-- C1: Name -->
+        <div class="ob-step active" id="ob-c1">
+          <div class="ob-step-eyebrow">Step 1 of 2</div>
+          <div class="ob-step-title">Hi there! 👋</div>
+          <div class="ob-step-desc">What's your name? We'll personalise your learning experience just for you.</div>
+          <div class="fgroup">
+            <label>Your name</label>
+            <input class="fi" id="ob-c-name" placeholder="e.g. Max"/>
+          </div>
+        </div>
+
+        <!-- C2: Personalise -->
+        <div class="ob-step" id="ob-c2">
+          <div class="ob-step-eyebrow">Step 2 of 2</div>
+          <div class="ob-step-title">Tell us about yourself</div>
+          <div class="ob-step-desc">This helps your tutor feel like it was made just for you.</div>
+          <div class="fgroup">
+            <label>What subjects are you studying? <span style="color:var(--ink4);font-weight:400">(pick any)</span></label>
+            <div class="subject-chips" id="c-subject-chips">
+              <div class="subject-chip" data-s="Math" onclick="pickSubjectC(this)">Math</div>
+              <div class="subject-chip" data-s="Science" onclick="pickSubjectC(this)">Science</div>
+              <div class="subject-chip" data-s="English" onclick="pickSubjectC(this)">English</div>
+              <div class="subject-chip" data-s="History" onclick="pickSubjectC(this)">History</div>
+              <div class="subject-chip" data-s="Geography" onclick="pickSubjectC(this)">Geography</div>
+              <div class="subject-chip" data-s="Biology" onclick="pickSubjectC(this)">Biology</div>
+              <div class="subject-chip" data-s="Chemistry" onclick="pickSubjectC(this)">Chemistry</div>
+              <div class="subject-chip" data-s="Physics" onclick="pickSubjectC(this)">Physics</div>
+              <div class="subject-chip" data-s="French" onclick="pickSubjectC(this)">French</div>
+              <div class="subject-chip" data-s="Spanish" onclick="pickSubjectC(this)">Spanish</div>
+              <div class="subject-chip" data-s="Art" onclick="pickSubjectC(this)">Art</div>
+              <div class="subject-chip" data-s="Music" onclick="pickSubjectC(this)">Music</div>
+              <div class="subject-chip" data-s="Computer Science" onclick="pickSubjectC(this)">Computer Science</div>
+            </div>
+          </div>
+          <div class="fgroup">
+            <label>Languages you speak</label>
+            <input class="fi" id="ob-c-langs" placeholder="e.g. English, German, Spanish..."/>
+          </div>
+          <div class="fgroup">
+            <label>Your hobbies or interests <span style="color:var(--ink4);font-weight:400">(helps the tutor use examples you'll love)</span></label>
+            <input class="fi" id="ob-c-hobbies" placeholder="e.g. football, drawing, gaming, cooking..."/>
+          </div>
+          <div class="fgroup">
+            <label>How do you learn best?</label>
+            <div class="learn-style-grid">
+              <div class="learn-style-card sel" data-ls="visual" onclick="pickLearnStyleC(this)">
+                <div class="learn-style-emoji">👁️</div>
+                <div class="learn-style-name">Visual</div>
+                <div class="learn-style-desc">Diagrams, images and visuals</div>
+              </div>
+              <div class="learn-style-card" data-ls="reading" onclick="pickLearnStyleC(this)">
+                <div class="learn-style-emoji">📖</div>
+                <div class="learn-style-name">Reading</div>
+                <div class="learn-style-desc">Reading and writing notes</div>
+              </div>
+              <div class="learn-style-card" data-ls="doing" onclick="pickLearnStyleC(this)">
+                <div class="learn-style-emoji">✋</div>
+                <div class="learn-style-name">Doing</div>
+                <div class="learn-style-desc">Trying things out myself</div>
+              </div>
+              <div class="learn-style-card" data-ls="talking" onclick="pickLearnStyleC(this)">
+                <div class="learn-style-emoji">💬</div>
+                <div class="learn-style-name">Talking</div>
+                <div class="learn-style-desc">Discussing ideas out loud</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Nav -->
+        <div class="ob-nav">
+          <div class="step-dots">
+            <div class="sdot cur" id="cd1"></div>
+            <div class="sdot" id="cd2"></div>
+          </div>
+          <button class="btn-back" id="ob-c-back" onclick="obChildBack()" style="display:block">← Back</button>
+          <button class="btn-next" id="ob-c-next" onclick="obChildNext()">Continue →</button>
+        </div>
+      </div>
+    </div>
+
+    <div style="text-align:center;margin-top:16px">
+      <button onclick="showLoginScreen()" style="background:none;border:none;color:var(--ink4);font-size:13px;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif">← Back to selection</button>
+    </div>
+  </div>
+</div>
+
+<!-- ╔══════════════════════════════════════════╗ -->
+<!-- ║     STUDENT PERSONAL USE ONBOARDING     ║ -->
+<!-- ╚══════════════════════════════════════════╝ -->
+<div id="ob-student">
+  <div class="ob-container">
+
+    <div class="ob-brand">
+      <div class="ob-brand-mark">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/>
+          <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+        </svg>
+      </div>
+      <span class="ob-wordmark">Guided</span>
+      <span class="ob-tagline">Build your personal AI tutor</span>
+    </div>
+
     <div class="ob-card">
       <div class="ob-progress-track">
-        <div class="ob-progress-fill" id="ob-prog" style="width:33%"></div>
+        <div class="ob-progress-fill" id="obs-prog" style="width:25%"></div>
       </div>
 
-      <!-- Step 1: Child profile -->
-      <div class="ob-step active" id="ob1">
-        <div class="ob-step-eyebrow">Step 1 of 3</div>
-        <div class="ob-step-title">Tell us about your child</div>
-        <div class="ob-step-desc">We'll personalize every response — vocabulary, examples, difficulty, and curriculum all adapt to them.</div>
-
+      <!-- S1: About you -->
+      <div class="ob-step active" id="obs1">
+        <div class="ob-step-eyebrow">Step 1 of 4</div>
+        <div class="ob-step-title">Let's get to know you</div>
+        <div class="ob-step-desc">Your tutor will adapt its tone, difficulty, and examples entirely to you.</div>
         <div class="fgroup">
-          <label>Your child's name</label>
-          <input class="fi" id="ob-name" placeholder="e.g. Max"/>
+          <label>Your name</label>
+          <input class="fi" id="obs-name" placeholder="e.g. Alex"/>
         </div>
-
         <div class="fgroup">
-          <label>How old is your child?</label>
+          <label>How old are you?</label>
           <div class="age-slider-wrap">
             <div class="age-display">
-              <span class="age-num" id="age-display">12</span>
+              <span class="age-num" id="obs-age-display">16</span>
               <span class="age-unit">years old</span>
             </div>
-            <input type="range" id="ob-age" min="6" max="18" value="12"
-              oninput="updateAgeSlider(this.value)"/>
-            <div class="age-labels"><span>6</span><span>9</span><span>12</span><span>15</span><span>18</span></div>
+            <input type="range" id="obs-age" min="6" max="25" value="16" oninput="updateAgeSliderS(this.value)"/>
+            <div class="age-labels"><span>6</span><span>12</span><span>16</span><span>20</span><span>25</span></div>
           </div>
         </div>
+      </div>
 
+      <!-- S2: Your learning -->
+      <div class="ob-step" id="obs2">
+        <div class="ob-step-eyebrow">Step 2 of 4</div>
+        <div class="ob-step-title">What are you studying?</div>
+        <div class="ob-step-desc">Pick everything relevant — your tutor will focus on what matters to you.</div>
         <div class="fgroup">
-          <label>Which school does your child go to?</label>
+          <label>Subjects <span style="color:var(--ink4);font-weight:400">(select all that apply)</span></label>
+          <div class="subject-chips" id="s-subject-chips">
+            <div class="subject-chip" data-s="Math" onclick="pickSubjectS(this)">Math</div>
+            <div class="subject-chip" data-s="Science" onclick="pickSubjectS(this)">Science</div>
+            <div class="subject-chip" data-s="English" onclick="pickSubjectS(this)">English</div>
+            <div class="subject-chip" data-s="History" onclick="pickSubjectS(this)">History</div>
+            <div class="subject-chip" data-s="Geography" onclick="pickSubjectS(this)">Geography</div>
+            <div class="subject-chip" data-s="Biology" onclick="pickSubjectS(this)">Biology</div>
+            <div class="subject-chip" data-s="Chemistry" onclick="pickSubjectS(this)">Chemistry</div>
+            <div class="subject-chip" data-s="Physics" onclick="pickSubjectS(this)">Physics</div>
+            <div class="subject-chip" data-s="French" onclick="pickSubjectS(this)">French</div>
+            <div class="subject-chip" data-s="Spanish" onclick="pickSubjectS(this)">Spanish</div>
+            <div class="subject-chip" data-s="German" onclick="pickSubjectS(this)">German</div>
+            <div class="subject-chip" data-s="Art" onclick="pickSubjectS(this)">Art</div>
+            <div class="subject-chip" data-s="Music" onclick="pickSubjectS(this)">Music</div>
+            <div class="subject-chip" data-s="Computer Science" onclick="pickSubjectS(this)">Computer Science</div>
+            <div class="subject-chip" data-s="Economics" onclick="pickSubjectS(this)">Economics</div>
+          </div>
+        </div>
+        <div class="fgroup">
+          <label>School or university <span style="color:var(--ink4);font-weight:400">(optional — helps match your curriculum)</span></label>
           <div class="school-wrap">
-            <input class="fi" id="ob-school" placeholder="e.g. Goethe-Gymnasium Berlin, St Mary's London..."
-              oninput="debounceSchool(this.value)"/>
-            <div class="school-status" id="school-status"></div>
+            <input class="fi" id="obs-school" placeholder="e.g. Goethe-Gymnasium, University of Manchester..." oninput="debounceSchoolS(this.value)"/>
+            <div class="school-status" id="obs-school-status"></div>
           </div>
         </div>
-
         <div class="fgroup">
-          <label>Anything the tutor should know?</label>
-          <textarea class="fta" id="ob-notes" placeholder="e.g. Gets frustrated quickly, loves football analogies, dyslexic, prefers short answers, struggles with fractions..."></textarea>
+          <label>Languages you speak</label>
+          <input class="fi" id="obs-langs" placeholder="e.g. English, German, French..."/>
         </div>
       </div>
 
-      <!-- Step 2: Goals + Parent updates -->
-      <div class="ob-step" id="ob2">
-        <div class="ob-step-eyebrow">Step 2 of 3</div>
-        <div class="ob-step-title">What matters most to you?</div>
-        <div class="ob-step-desc">This shapes how the tutor approaches every session.</div>
-
+      <!-- S3: Your style -->
+      <div class="ob-step" id="obs3">
+        <div class="ob-step-eyebrow">Step 3 of 4</div>
+        <div class="ob-step-title">How do you learn?</div>
+        <div class="ob-step-desc">The more you share, the better your tutor will match your personality.</div>
         <div class="fgroup">
-          <label>Learning Goal</label>
-          <div class="goal-chips">
-            <div class="goal-chip sel" data-g="critical" onclick="pickGoal(this)">
-              <div class="goal-chip-check"></div>
-              <div class="goal-chip-body">
-                <div class="goal-chip-name">🧠 Strong critical thinking</div>
-                <div class="goal-chip-desc">Build the ability to reason, analyze, and solve problems independently — skills that last a lifetime</div>
-              </div>
+          <label>Your hobbies &amp; interests <span style="color:var(--ink4);font-weight:400">(your tutor uses these for examples)</span></label>
+          <input class="fi" id="obs-hobbies" placeholder="e.g. football, coding, drawing, music..."/>
+        </div>
+        <div class="fgroup">
+          <label>How do you learn best?</label>
+          <div class="learn-style-grid">
+            <div class="learn-style-card sel" data-ls="visual" onclick="pickLearnStyleS(this)">
+              <div class="learn-style-emoji">👁️</div>
+              <div class="learn-style-name">Visual</div>
+              <div class="learn-style-desc">Diagrams, images and visuals</div>
             </div>
-            <div class="goal-chip" data-g="homework" onclick="pickGoal(this)">
-              <div class="goal-chip-check"></div>
-              <div class="goal-chip-body">
-                <div class="goal-chip-name">📚 Homework support</div>
-                <div class="goal-chip-desc">Get unstuck on specific assignments and understand the material well enough to do it alone next time</div>
-              </div>
+            <div class="learn-style-card" data-ls="reading" onclick="pickLearnStyleS(this)">
+              <div class="learn-style-emoji">📖</div>
+              <div class="learn-style-name">Reading</div>
+              <div class="learn-style-desc">Reading and writing notes</div>
             </div>
-            <div class="goal-chip" data-g="curiosity" onclick="pickGoal(this)">
-              <div class="goal-chip-check"></div>
-              <div class="goal-chip-body">
-                <div class="goal-chip-name">✨ Curiosity &amp; love of learning</div>
-                <div class="goal-chip-desc">Make learning genuinely enjoyable — spark wonder, explore ideas, and keep the child naturally curious</div>
-              </div>
+            <div class="learn-style-card" data-ls="doing" onclick="pickLearnStyleS(this)">
+              <div class="learn-style-emoji">✋</div>
+              <div class="learn-style-name">Doing</div>
+              <div class="learn-style-desc">Trying things out myself</div>
+            </div>
+            <div class="learn-style-card" data-ls="talking" onclick="pickLearnStyleS(this)">
+              <div class="learn-style-emoji">💬</div>
+              <div class="learn-style-name">Talking</div>
+              <div class="learn-style-desc">Discussing ideas out loud</div>
             </div>
           </div>
         </div>
+        <div class="fgroup">
+          <label>What do you struggle with most? <span style="color:var(--ink4);font-weight:400">(optional)</span></label>
+          <textarea class="fta" id="obs-struggles" placeholder="e.g. I find it hard to stay focused, I struggle with algebra, I get anxious about exams..."></textarea>
+        </div>
+      </div>
 
+      <!-- S4: Your tutor -->
+      <div class="ob-step" id="obs4">
+        <div class="ob-step-eyebrow">Step 4 of 4</div>
+        <div class="ob-step-title">Build your tutor</div>
+        <div class="ob-step-desc">Choose how your AI tutor should teach you. You can change this anytime.</div>
+        <div class="fgroup">
+          <label>Teaching Style</label>
+          <div class="style-grid" id="s-style-grid">
+            <div class="style-card sel" data-s="socratic" onclick="pickStyleS(this)">
+              <span class="style-emoji">🧠</span>
+              <div class="style-name">Socratic Guide</div>
+              <div class="style-desc">Guides you with questions so you think your way to the answer</div>
+            </div>
+            <div class="style-card" data-s="stepbystep" onclick="pickStyleS(this)">
+              <span class="style-emoji">📐</span>
+              <div class="style-name">Step by Step</div>
+              <div class="style-desc">Breaks everything down, confirms understanding at each stage</div>
+            </div>
+            <div class="style-card" data-s="friendly" onclick="pickStyleS(this)">
+              <span class="style-emoji">🌱</span>
+              <div class="style-name">Warm &amp; Patient</div>
+              <div class="style-desc">Encouraging, everyday analogies, relaxed pace</div>
+            </div>
+            <div class="style-card" data-s="challenge" onclick="pickStyleS(this)">
+              <span class="style-emoji">🎯</span>
+              <div class="style-name">Challenge Mode</div>
+              <div class="style-desc">High standards, pushes hard thinking, no hand-holding</div>
+            </div>
+          </div>
+        </div>
         <div class="fgroup" style="margin-top:4px">
-          <label>Parent Updates</label>
-          <div class="update-options">
-            <div class="update-opt" data-u="weekly" onclick="pickUpdate(this)">
-              <div class="update-radio"></div>
-              <div class="update-opt-text">
-                <div class="update-opt-name">Weekly report</div>
-                <div class="update-opt-desc">Summary of sessions, progress, and independence score every Monday</div>
+          <label>Your main goal</label>
+          <div class="goal-chips" id="s-goal-chips">
+            <div class="goal-chip sel" data-g="critical" onclick="pickGoalS(this)">
+              <div class="goal-chip-check"></div>
+              <div class="goal-chip-body">
+                <div class="goal-chip-name">🧠 Build strong critical thinking</div>
+                <div class="goal-chip-desc">Learn to reason and solve problems independently — skills that stay with you</div>
               </div>
             </div>
-            <div class="update-opt sel" data-u="monthly" onclick="pickUpdate(this)">
-              <div class="update-radio"></div>
-              <div class="update-opt-text">
-                <div class="update-opt-name">Monthly report</div>
-                <div class="update-opt-desc">In-depth progress review at the end of each month</div>
+            <div class="goal-chip" data-g="homework" onclick="pickGoalS(this)">
+              <div class="goal-chip-check"></div>
+              <div class="goal-chip-body">
+                <div class="goal-chip-name">📚 Homework &amp; exam help</div>
+                <div class="goal-chip-desc">Get unstuck on assignments and understand material well enough to do it alone</div>
               </div>
             </div>
-            <div class="update-opt" data-u="problems" onclick="pickUpdate(this)">
-              <div class="update-radio"></div>
-              <div class="update-opt-text">
-                <div class="update-opt-name">Only if problems appear</div>
-                <div class="update-opt-desc">We'll alert you only when the independence score drops or the child seems stuck</div>
+            <div class="goal-chip" data-g="curiosity" onclick="pickGoalS(this)">
+              <div class="goal-chip-check"></div>
+              <div class="goal-chip-body">
+                <div class="goal-chip-name">✨ Explore &amp; stay curious</div>
+                <div class="goal-chip-desc">Make learning genuinely enjoyable — spark wonder and explore ideas deeply</div>
               </div>
             </div>
           </div>
         </div>
-      </div>
-
-      <!-- Step 3: Teaching style -->
-      <div class="ob-step" id="ob3">
-        <div class="ob-step-eyebrow">Step 3 of 3</div>
-        <div class="ob-step-title">How should the tutor teach?</div>
-        <div class="ob-step-desc">Pick the style that fits your child's personality. You can always change this later.</div>
-
-        <div class="style-grid">
-          <div class="style-card sel" data-s="socratic" onclick="pickStyle(this)">
-            <span class="style-emoji">🧠</span>
-            <div class="style-name">Socratic Guide</div>
-            <div class="style-desc">Explains then asks questions — the student thinks their way to the answer</div>
-          </div>
-          <div class="style-card" data-s="stepbystep" onclick="pickStyle(this)">
-            <span class="style-emoji">📐</span>
-            <div class="style-name">Step by Step</div>
-            <div class="style-desc">Breaks everything into tiny pieces, confirms understanding at each stage</div>
-          </div>
-          <div class="style-card" data-s="friendly" onclick="pickStyle(this)">
-            <span class="style-emoji">🌱</span>
-            <div class="style-name">Warm &amp; Patient</div>
-            <div class="style-desc">Very encouraging, everyday analogies, perfect for anxious or reluctant learners</div>
-          </div>
-          <div class="style-card" data-s="challenge" onclick="pickStyle(this)">
-            <span class="style-emoji">🎯</span>
-            <div class="style-name">Challenge Mode</div>
-            <div class="style-desc">High standards, no hand-holding, pushes hard thinking — for advanced students</div>
-          </div>
-        </div>
-
       </div>
 
       <!-- Nav -->
       <div class="ob-nav">
         <div class="step-dots">
-          <div class="sdot cur" id="sd1"></div>
-          <div class="sdot" id="sd2"></div>
-          <div class="sdot" id="sd3"></div>
+          <div class="sdot cur" id="sd-s1"></div>
+          <div class="sdot" id="sd-s2"></div>
+          <div class="sdot" id="sd-s3"></div>
+          <div class="sdot" id="sd-s4"></div>
         </div>
-        <button class="btn-back" id="ob-back" onclick="obBack()" style="display:none">← Back</button>
-        <button class="btn-next" id="ob-next" onclick="obNext()">Continue →</button>
+        <button class="btn-back" id="obs-back" onclick="obStudentBack()" style="display:none">← Back</button>
+        <button class="btn-next" id="obs-next" onclick="obStudentNext()">Continue →</button>
+      </div>
+    </div>
+
+    <div style="text-align:center;margin-top:16px">
+      <button onclick="showLoginScreen()" style="background:none;border:none;color:var(--ink4);font-size:13px;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif">← Back to selection</button>
+    </div>
+  </div>
+</div>
+
+<!-- ╔══════════════════════════════════════════╗ -->
+<!-- ║           PARENT DASHBOARD              ║ -->
+<!-- ╚══════════════════════════════════════════╝ -->
+<div id="parent-dashboard">
+  <div class="parent-dash-wrap">
+
+    <div class="parent-dash-header">
+      <div>
+        <div class="parent-greeting" id="pd-greeting">Welcome</div>
+        <div class="parent-greeting-sub">Manage your children's learning profiles and tutor settings</div>
+      </div>
+      <div class="parent-dash-actions">
+        <button class="btn-add-child" onclick="toggleAddChildPanel()">+ Add Child</button>
+        <button class="btn-logout-parent" onclick="showLoginScreen()">Log out</button>
+      </div>
+    </div>
+
+    <!-- Add child panel -->
+    <div id="add-child-panel" class="add-child-panel">
+      <div style="font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--ink4)">Add Another Child</div>
+      <div class="frow">
+        <div class="fgroup">
+          <label>Child's name</label>
+          <input class="fi" id="pd-c-name" placeholder="e.g. Emma"/>
+        </div>
+        <div class="fgroup">
+          <label>Age</label>
+          <div class="age-slider-wrap" style="min-width:0">
+            <div class="age-display">
+              <span class="age-num" id="pd-c-age-display">10</span>
+              <span class="age-unit">years old</span>
+            </div>
+            <input type="range" id="pd-c-age" min="6" max="18" value="10" oninput="updateAgeSliderDash(this.value)"/>
+            <div class="age-labels"><span>6</span><span>9</span><span>12</span><span>15</span><span>18</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="frow">
+        <div class="fgroup">
+          <label>School <span style="color:var(--ink4);font-weight:400">(optional)</span></label>
+          <input class="fi" id="pd-c-school" placeholder="e.g. Lincoln High School"/>
+        </div>
+        <div class="fgroup">
+          <label>Teaching Style</label>
+          <select class="fs" id="pd-c-style">
+            <option value="socratic">Socratic Guide</option>
+            <option value="stepbystep">Step by Step</option>
+            <option value="friendly">Warm &amp; Patient</option>
+            <option value="challenge">Challenge Mode</option>
+          </select>
+        </div>
+      </div>
+      <div class="frow">
+        <div class="fgroup">
+          <label>Learning Goal</label>
+          <select class="fs" id="pd-c-goal">
+            <option value="critical">Critical Thinking</option>
+            <option value="homework">Homework Help</option>
+            <option value="curiosity">Curiosity &amp; Fun</option>
+          </select>
+        </div>
+        <div class="fgroup">
+          <label>Answer Pace</label>
+          <select class="fs" id="pd-c-pace">
+            <option value="guided">Guided</option>
+            <option value="balanced">Balanced</option>
+            <option value="direct">Direct</option>
+          </select>
+        </div>
+      </div>
+      <div class="fgroup">
+        <label>Notes for the tutor <span style="color:var(--ink4);font-weight:400">(optional)</span></label>
+        <textarea class="fta" id="pd-c-notes" placeholder="e.g. Struggles with fractions, loves space examples..."></textarea>
+      </div>
+      <div style="display:flex;gap:10px">
+        <button class="btn-next" onclick="saveNewChild()" style="flex:1">Add Child →</button>
+        <button class="btn-back" onclick="toggleAddChildPanel()">Cancel</button>
+      </div>
+    </div>
+
+    <!-- Children -->
+    <div>
+      <div class="dash-section-title">Your Children <span id="children-count" style="background:var(--cream2);padding:2px 8px;border-radius:20px;font-size:10px;margin-left:4px;font-weight:700">0</span></div>
+      <div class="child-cards-grid" id="child-cards-grid"></div>
+    </div>
+
+    <!-- Activity feed -->
+    <div>
+      <div class="dash-section-title">Recent Activity</div>
+      <div class="activity-feed" id="activity-feed">
+        <div class="activity-empty">No sessions yet. Start a session for one of your children to see their activity here.</div>
       </div>
     </div>
 
@@ -2524,178 +3026,350 @@ ${ndCtx ? `\n━━━━━━━━━━━━━━━━━━━━━━�
 }
 
 // ══════════════════════════════════════════════
-//  ONBOARDING
+//  ONBOARDING — FAMILY, CHILD, STUDENT PATHS
 // ══════════════════════════════════════════════
-let obStep = 1;
-let schoolDebounce = null;
+let obParentStep  = 1;
+let obChildStep   = 1;
+let obStudentStep = 1;
+let schoolDebounceP = null;
+let schoolDebounceS = null;
 
-function updateAgeSlider(val) {
-  document.getElementById('age-display').textContent = val;
-  // Update gradient fill
+// ── Age sliders ──
+function updateAgeSliderP(val) {
+  document.getElementById('ob-p-age-display').textContent = val;
   const pct = ((val - 6) / 12) * 100;
-  document.getElementById('ob-age').style.background =
+  document.getElementById('ob-p-age').style.background =
+    `linear-gradient(to right, var(--forest) 0%, var(--forest) ${pct}%, var(--cream3) ${pct}%)`;
+}
+function updateAgeSliderS(val) {
+  document.getElementById('obs-age-display').textContent = val;
+  const pct = ((val - 6) / 19) * 100;
+  document.getElementById('obs-age').style.background =
+    `linear-gradient(to right, var(--forest) 0%, var(--forest) ${pct}%, var(--cream3) ${pct}%)`;
+}
+function updateAgeSliderDash(val) {
+  document.getElementById('pd-c-age-display').textContent = val;
+  const pct = ((val - 6) / 12) * 100;
+  document.getElementById('pd-c-age').style.background =
     `linear-gradient(to right, var(--forest) 0%, var(--forest) ${pct}%, var(--cream3) ${pct}%)`;
 }
 
-function debounceSchool(val) {
-  clearTimeout(schoolDebounce);
-  if (!val.trim() || val.trim().length < 4) {
-    document.getElementById('school-status').className = 'school-status';
-    return;
-  }
-  schoolDebounce = setTimeout(() => lookupSchool(val.trim()), 800);
+// ── School lookup ──
+function debounceSchoolP(val) {
+  clearTimeout(schoolDebounceP);
+  const el = document.getElementById('ob-p-school-status');
+  if (!val.trim() || val.trim().length < 4) { el.className = 'school-status'; return; }
+  schoolDebounceP = setTimeout(() => lookupSchoolGeneric(val.trim(), 'ob-p-school-status'), 800);
 }
-
-async function lookupSchool(name) {
-  const el = document.getElementById('school-status');
+function debounceSchoolS(val) {
+  clearTimeout(schoolDebounceS);
+  const el = document.getElementById('obs-school-status');
+  if (!val.trim() || val.trim().length < 4) { el.className = 'school-status'; return; }
+  schoolDebounceS = setTimeout(() => lookupSchoolGeneric(val.trim(), 'obs-school-status'), 800);
+}
+async function lookupSchoolGeneric(name, statusElId) {
+  const el = document.getElementById(statusElId);
   el.className = 'school-status searching';
   el.textContent = '🔍 Researching school curriculum...';
-
-  // Detect country from school name keywords
   const lower = name.toLowerCase();
-  let country = 'International';
-  let curriculumUrl = '';
-  let curriculumDesc = '';
-
-  if (lower.includes('gymnasium') || lower.includes('realschule') || lower.includes('gesamtschule') || lower.includes('berlin') || lower.includes('münchen') || lower.includes('hamburg') || lower.includes('köln') || lower.includes('frankfurt') || lower.includes('deutsche')) {
-    country = 'Germany';
-    curriculumUrl = `https://en.wikipedia.org/wiki/Education_in_Germany`;
-    curriculumDesc = 'German state curriculum (Lehrplan)';
-  } else if (lower.includes('academy') || lower.includes('college') || lower.includes("st ") || lower.includes("saint") || lower.includes('grammar') || lower.includes('london') || lower.includes('manchester') || lower.includes('birmingham') || lower.includes('british')) {
-    country = 'UK';
-    curriculumUrl = `https://en.wikipedia.org/wiki/National_curriculum_in_England`;
-    curriculumDesc = 'National Curriculum for England';
-  } else if (lower.includes('école') || lower.includes('lycée') || lower.includes('collège') || lower.includes('paris') || lower.includes('français')) {
-    country = 'France';
-    curriculumUrl = `https://en.wikipedia.org/wiki/Education_in_France`;
-    curriculumDesc = 'French national curriculum (Éducation nationale)';
-  } else if (lower.includes('scuola') || lower.includes('liceo') || lower.includes('istituto') || lower.includes('italiano')) {
-    country = 'Italy';
-    curriculumUrl = `https://en.wikipedia.org/wiki/Education_in_Italy`;
-    curriculumDesc = 'Italian Ministry of Education curriculum';
-  } else if (lower.includes('high school') || lower.includes('elementary') || lower.includes('middle school') || lower.includes('american') || lower.includes('usa')) {
-    country = 'USA';
-    curriculumUrl = `https://en.wikipedia.org/wiki/Education_in_the_United_States`;
-    curriculumDesc = 'US Common Core curriculum standards';
+  let country = 'International', curriculumUrl = '', curriculumDesc = '';
+  if (lower.includes('gymnasium')||lower.includes('realschule')||lower.includes('gesamtschule')||lower.includes('berlin')||lower.includes('münchen')||lower.includes('hamburg')||lower.includes('köln')||lower.includes('frankfurt')||lower.includes('deutsche')) {
+    country='Germany'; curriculumUrl='https://en.wikipedia.org/wiki/Education_in_Germany'; curriculumDesc='German state curriculum (Lehrplan)';
+  } else if (lower.includes('academy')||lower.includes('college')||lower.includes('st ')||lower.includes('saint')||lower.includes('grammar')||lower.includes('london')||lower.includes('manchester')||lower.includes('birmingham')||lower.includes('british')) {
+    country='UK'; curriculumUrl='https://en.wikipedia.org/wiki/National_curriculum_in_England'; curriculumDesc='National Curriculum for England';
+  } else if (lower.includes('école')||lower.includes('lycée')||lower.includes('collège')||lower.includes('paris')||lower.includes('français')) {
+    country='France'; curriculumUrl='https://en.wikipedia.org/wiki/Education_in_France'; curriculumDesc='French national curriculum (Éducation nationale)';
+  } else if (lower.includes('scuola')||lower.includes('liceo')||lower.includes('istituto')||lower.includes('italiano')) {
+    country='Italy'; curriculumUrl='https://en.wikipedia.org/wiki/Education_in_Italy'; curriculumDesc='Italian Ministry of Education curriculum';
+  } else if (lower.includes('high school')||lower.includes('elementary')||lower.includes('middle school')||lower.includes('american')||lower.includes('usa')) {
+    country='USA'; curriculumUrl='https://en.wikipedia.org/wiki/Education_in_the_United_States'; curriculumDesc='US Common Core curriculum standards';
   } else {
-    // Generic fallback — use IB curriculum
-    country = 'International';
-    curriculumUrl = `https://en.wikipedia.org/wiki/International_Baccalaureate`;
-    curriculumDesc = 'International Baccalaureate curriculum';
+    country='International'; curriculumUrl='https://en.wikipedia.org/wiki/International_Baccalaureate'; curriculumDesc='International Baccalaureate curriculum';
   }
-
-  // Store for later Needle loading
-  S.school = name;
   S.schoolCurriculum = curriculumUrl;
-
   el.className = 'school-status found';
-  el.innerHTML = `✓ Found: <strong>${country} curriculum</strong> detected — <em>${curriculumDesc}</em> will be loaded into Needle automatically when you start.`;
-
-  // Update step 3 status
-  document.getElementById('ob3-desc').textContent = `Featherless · ElevenLabs · Needle — ready. ${curriculumDesc} will load automatically.`;
+  el.innerHTML = `✓ Found: <strong>${country} curriculum</strong> — <em>${curriculumDesc}</em> will load when you start.`;
 }
 
-function pickStyle(el) {
-  document.querySelectorAll('.style-card').forEach(c => c.classList.remove('sel'));
-  el.classList.add('sel');
+// ── Chip/card pickers (scoped by container) ──
+function pickStyleP(el) { document.querySelectorAll('#p-style-grid .style-card').forEach(c=>c.classList.remove('sel')); el.classList.add('sel'); }
+function pickGoalP(el)  { document.querySelectorAll('#p-goal-chips .goal-chip').forEach(c=>c.classList.remove('sel')); el.classList.add('sel'); }
+function pickPaceP(el)  { document.querySelectorAll('#p-pace-options .pace-opt').forEach(c=>c.classList.remove('sel')); el.classList.add('sel'); }
+function pickStyleS(el) { document.querySelectorAll('#s-style-grid .style-card').forEach(c=>c.classList.remove('sel')); el.classList.add('sel'); }
+function pickGoalS(el)  { document.querySelectorAll('#s-goal-chips .goal-chip').forEach(c=>c.classList.remove('sel')); el.classList.add('sel'); }
+function pickSubjectC(el) { el.classList.toggle('sel'); }
+function pickSubjectS(el) { el.classList.toggle('sel'); }
+function pickLearnStyleC(el) { document.querySelectorAll('#ob-c2 .learn-style-card').forEach(c=>c.classList.remove('sel')); el.classList.add('sel'); }
+function pickLearnStyleS(el) { document.querySelectorAll('#obs3 .learn-style-card').forEach(c=>c.classList.remove('sel')); el.classList.add('sel'); }
+// Legacy aliases
+function pickStyle(el) { pickStyleP(el); }
+function pickGoal(el)  { pickGoalP(el); }
+function pickUpdate(el){ document.querySelectorAll('.update-opt').forEach(c=>c.classList.remove('sel')); el.classList.add('sel'); }
+
+// ── Family sub-choice ──
+function obFamilyChooseParent() {
+  document.getElementById('ob-subchoice').style.display = 'none';
+  document.getElementById('ob-parent-flow').style.display = 'block';
+  obParentStep = 1; renderObParent();
+}
+function obFamilyChooseChild() {
+  document.getElementById('ob-subchoice').style.display = 'none';
+  document.getElementById('ob-child-flow').style.display = 'block';
+  obChildStep = 1; renderObChild();
 }
 
-function pickGoal(el) {
-  document.querySelectorAll('.goal-chip').forEach(c => c.classList.remove('sel'));
-  el.classList.add('sel');
+// ── Parent flow ──
+function obParentBack() {
+  if (obParentStep < 2) return;
+  obParentStep--; renderObParent();
 }
-
-function pickUpdate(el) {
-  document.querySelectorAll('.update-opt').forEach(c => c.classList.remove('sel'));
-  el.classList.add('sel');
+function obParentNext() {
+  if (obParentStep === 1 && !document.getElementById('ob-p-name').value.trim()) { toast('Enter your name', 'err'); return; }
+  if (obParentStep === 2 && !document.getElementById('ob-p-child-name').value.trim()) { toast("Enter your child's name", 'err'); return; }
+  if (obParentStep === 3) { launchParentDashboard(); return; }
+  obParentStep++; renderObParent();
 }
-
-function obBack() {
-  if (obStep < 2) return;
-  obStep--;
-  renderOb();
-}
-
-function obNext() {
-  if (obStep === 1) {
-    if (!document.getElementById('ob-name').value.trim()) { toast('Enter your child\'s name', 'err'); return; }
-  }
-  if (obStep === 3) { launch(); return; }
-  obStep++;
-  renderOb();
-}
-
-function renderOb() {
-  ['ob1','ob2','ob3'].forEach((id, i) => {
-    document.getElementById(id).classList.toggle('active', i + 1 === obStep);
-    const dot = document.getElementById(`sd${i+1}`);
-    dot.classList.toggle('cur', i + 1 === obStep);
-    dot.classList.toggle('done', i + 1 < obStep);
+function renderObParent() {
+  ['ob-p1','ob-p2','ob-p3'].forEach((id,i) => {
+    document.getElementById(id).classList.toggle('active', i+1===obParentStep);
+    const dot = document.getElementById(`pd${i+1}`);
+    dot.classList.toggle('cur', i+1===obParentStep);
+    dot.classList.toggle('done', i+1<obParentStep);
   });
-  document.getElementById('ob-prog').style.width = (obStep / 3 * 100) + '%';
-  document.getElementById('ob-back').style.display = obStep > 1 ? 'block' : 'none';
-  document.getElementById('ob-next').textContent = obStep === 3 ? 'Start Learning →' : 'Continue →';
+  document.getElementById('ob-p-prog').style.width = (obParentStep/3*100)+'%';
+  document.getElementById('ob-p-back').style.display = obParentStep>1 ? 'block' : 'none';
+  document.getElementById('ob-p-next').textContent = obParentStep===3 ? 'Go to Dashboard →' : 'Continue →';
 }
 
-async function launch() {
-  S.name   = document.getElementById('ob-name').value.trim();
-  S.age    = document.getElementById('ob-age').value;
-  S.subj   = 'General / Mixed';
-  S.notes  = document.getElementById('ob-notes').value.trim();
-  S.school = document.getElementById('ob-school').value.trim();
+// ── Child flow ──
+function obChildBack() {
+  if (obChildStep < 2) {
+    document.getElementById('ob-child-flow').style.display = 'none';
+    document.getElementById('ob-subchoice').style.display = 'block';
+    return;
+  }
+  obChildStep--; renderObChild();
+}
+function obChildNext() {
+  if (obChildStep === 1 && !document.getElementById('ob-c-name').value.trim()) { toast('Enter your name', 'err'); return; }
+  if (obChildStep === 2) { launchChild(); return; }
+  obChildStep++; renderObChild();
+}
+function renderObChild() {
+  ['ob-c1','ob-c2'].forEach((id,i) => {
+    document.getElementById(id).classList.toggle('active', i+1===obChildStep);
+    const dot = document.getElementById(`cd${i+1}`);
+    dot.classList.toggle('cur', i+1===obChildStep);
+    dot.classList.toggle('done', i+1<obChildStep);
+  });
+  document.getElementById('ob-c-prog').style.width = (obChildStep/2*100)+'%';
+  document.getElementById('ob-c-next').textContent = obChildStep===2 ? 'Start Learning →' : 'Continue →';
+}
 
-  const selGoal   = document.querySelector('.goal-chip.sel');
-  const selUpdate = document.querySelector('.update-opt.sel');
-  const selStyle  = document.querySelector('.style-card.sel');
-  S.learningGoal  = selGoal   ? selGoal.dataset.g   : 'critical';
-  S.parentUpdates = selUpdate ? selUpdate.dataset.u : 'monthly';
-  S.style         = selStyle  ? selStyle.dataset.s  : 'socratic';
-  S.sessionStart  = Date.now();
+// ── Student personal use flow ──
+function obStudentBack() {
+  if (obStudentStep < 2) return;
+  obStudentStep--; renderObStudent();
+}
+function obStudentNext() {
+  if (obStudentStep === 1 && !document.getElementById('obs-name').value.trim()) { toast('Enter your name', 'err'); return; }
+  if (obStudentStep === 4) { launchStudent(); return; }
+  obStudentStep++; renderObStudent();
+}
+function renderObStudent() {
+  ['obs1','obs2','obs3','obs4'].forEach((id,i) => {
+    document.getElementById(id).classList.toggle('active', i+1===obStudentStep);
+    const dot = document.getElementById(`sd-s${i+1}`);
+    dot.classList.toggle('cur', i+1===obStudentStep);
+    dot.classList.toggle('done', i+1<obStudentStep);
+  });
+  document.getElementById('obs-prog').style.width = (obStudentStep/4*100)+'%';
+  document.getElementById('obs-back').style.display = obStudentStep>1 ? 'block' : 'none';
+  document.getElementById('obs-next').textContent = obStudentStep===4 ? 'Start Learning →' : 'Continue →';
+}
 
-  // Map goal to a session goal string
-  const goalMap = {
-    critical: 'Build strong critical thinking and reasoning skills',
-    homework: 'Homework support — understand the material well enough to work independently',
-    curiosity: 'Spark genuine curiosity and love of learning',
+// ── Launch: Parent Dashboard ──
+function launchParentDashboard() {
+  const parentName  = document.getElementById('ob-p-name').value.trim();
+  const childName   = document.getElementById('ob-p-child-name').value.trim();
+  const childAge    = document.getElementById('ob-p-age').value;
+  const childSchool = document.getElementById('ob-p-school').value.trim();
+  const childNotes  = document.getElementById('ob-p-notes').value.trim();
+  const selGoal  = document.querySelector('#p-goal-chips .goal-chip.sel');
+  const selStyle = document.querySelector('#p-style-grid .style-card.sel');
+  const selPace  = document.querySelector('#p-pace-options .pace-opt.sel');
+  const goalMap     = { critical:'Build strong critical thinking', homework:'Homework support', curiosity:'Curiosity & love of learning' };
+  const styleLabels = { socratic:'Socratic Guide', stepbystep:'Step by Step', friendly:'Warm & Patient', challenge:'Challenge Mode' };
+  const paceLabels  = { guided:'Guided', balanced:'Balanced', direct:'Direct' };
+  const goal  = selGoal  ? selGoal.dataset.g  : 'critical';
+  const style = selStyle ? selStyle.dataset.s : 'socratic';
+  const pace  = selPace  ? selPace.dataset.p  : 'balanced';
+  window.parentData = {
+    name: parentName,
+    children: [{ name:childName, age:childAge, school:childSchool, notes:childNotes, goal, style, pace, subjects:[],
+      goalLabel:goalMap[goal], styleLabel:styleLabels[style], paceLabel:paceLabels[pace], addedAt:Date.now() }]
   };
-  S.goal = goalMap[S.learningGoal];
-
-  // Hide onboarding, show app
   document.getElementById('ob').style.display = 'none';
+  showParentDashboard();
+}
+
+function showParentDashboard() {
+  document.getElementById('parent-dashboard').style.display = 'flex';
+  const hour = new Date().getHours();
+  const greeting = hour<12 ? 'Good morning' : hour<18 ? 'Good afternoon' : 'Good evening';
+  const name = window.parentData ? window.parentData.name : '';
+  document.getElementById('pd-greeting').textContent = `${greeting}${name ? ', '+name : ''}`;
+  renderParentDashboard();
+}
+
+function renderParentDashboard() {
+  if (!window.parentData) return;
+  const children = window.parentData.children || [];
+  document.getElementById('children-count').textContent = children.length;
+  const grid = document.getElementById('child-cards-grid');
+  if (children.length === 0) {
+    grid.innerHTML = `<div style="text-align:center;padding:40px;background:var(--white);border:1.5px dashed var(--border);border-radius:20px;color:var(--ink4);font-size:13.5px;grid-column:1/-1">No children added yet. Click "+ Add Child" to get started.</div>`;
+    return;
+  }
+  grid.innerHTML = children.map((c,i) => {
+    const av = c.name[0].toUpperCase();
+    const subjTags = (c.subjects&&c.subjects.length)
+      ? c.subjects.slice(0,4).map(s=>`<span class="child-subj-tag">${s}</span>`).join('')+(c.subjects.length>4?`<span class="child-subj-tag">+${c.subjects.length-4}</span>`:'')
+      : '<span class="child-subj-tag">General</span>';
+    return `<div class="child-card">
+      <div class="child-card-top">
+        <div class="child-card-av">${av}</div>
+        <div><div class="child-card-name">${c.name}</div><div class="child-card-meta">${c.age} years old${c.school?' · '+c.school:''}</div></div>
+      </div>
+      <div class="child-subj-tags">${subjTags}</div>
+      <div class="child-card-settings">
+        <div class="child-setting-row"><span class="child-setting-label">Teaching style</span><span class="child-setting-val">${c.styleLabel||c.style}</span></div>
+        <div class="child-setting-row"><span class="child-setting-label">Goal</span><span class="child-setting-val">${c.goalLabel||c.goal}</span></div>
+        <div class="child-setting-row"><span class="child-setting-label">Answer pace</span><span class="child-setting-val">${c.paceLabel||c.pace}</span></div>
+        ${c.notes?`<div class="child-setting-row"><span class="child-setting-label">Notes</span><span class="child-setting-val" style="font-size:11px;max-width:160px;text-align:right;color:var(--ink3)">${c.notes.slice(0,40)}${c.notes.length>40?'...':''}</span></div>`:''}
+      </div>
+      <div class="child-card-btns">
+        <button class="btn-start-child" onclick="launchFromDashboard(${i})">Start Session →</button>
+        <button class="btn-edit-child" onclick="toast('Settings editable after your first session','ok')">Edit</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function toggleAddChildPanel() {
+  const panel = document.getElementById('add-child-panel');
+  const showing = panel.style.display === 'flex';
+  panel.style.display = showing ? 'none' : 'flex';
+  if (!showing) panel.scrollIntoView({ behavior:'smooth', block:'start' });
+}
+
+function saveNewChild() {
+  const name = document.getElementById('pd-c-name').value.trim();
+  if (!name) { toast("Enter the child's name", 'err'); return; }
+  const age    = document.getElementById('pd-c-age').value;
+  const school = document.getElementById('pd-c-school').value.trim();
+  const style  = document.getElementById('pd-c-style').value;
+  const goal   = document.getElementById('pd-c-goal').value;
+  const pace   = document.getElementById('pd-c-pace').value;
+  const notes  = document.getElementById('pd-c-notes').value.trim();
+  const styleLabels = { socratic:'Socratic Guide', stepbystep:'Step by Step', friendly:'Warm & Patient', challenge:'Challenge Mode' };
+  const goalMap     = { critical:'Build strong critical thinking', homework:'Homework support', curiosity:'Curiosity & love of learning' };
+  const paceLabels  = { guided:'Guided', balanced:'Balanced', direct:'Direct' };
+  window.parentData.children.push({ name, age, school, style, goal, pace, notes, subjects:[],
+    styleLabel:styleLabels[style], goalLabel:goalMap[goal], paceLabel:paceLabels[pace], addedAt:Date.now() });
+  document.getElementById('pd-c-name').value = '';
+  document.getElementById('pd-c-school').value = '';
+  document.getElementById('pd-c-notes').value = '';
+  toggleAddChildPanel();
+  renderParentDashboard();
+  toast(`${name} added!`, 'ok');
+}
+
+// ── Launch: from Dashboard ──
+function launchFromDashboard(idx) {
+  const child = window.parentData.children[idx];
+  if (!child) return;
+  S.name         = child.name;
+  S.age          = child.age;
+  S.school       = child.school || '';
+  S.notes        = child.notes || '';
+  S.style        = child.style;
+  S.learningGoal = child.goal;
+  S.pace         = child.pace;
+  S.subj         = (child.subjects&&child.subjects.length) ? child.subjects.join(', ') : 'General / Mixed';
+  S.goal         = child.goalLabel || child.goal;
+  S.sessionStart = Date.now();
+  document.getElementById('parent-dashboard').style.display = 'none';
+  startAppSession();
+}
+
+// ── Launch: Child onboarding ──
+function launchChild() {
+  const name     = document.getElementById('ob-c-name').value.trim();
+  const subjects = [...document.querySelectorAll('#c-subject-chips .subject-chip.sel')].map(el=>el.dataset.s);
+  const langs    = document.getElementById('ob-c-langs').value.trim();
+  const hobbies  = document.getElementById('ob-c-hobbies').value.trim();
+  const selLS    = document.querySelector('#ob-c2 .learn-style-card.sel');
+  S.name         = name;
+  S.age          = 12;
+  S.subj         = subjects.length ? subjects.join(', ') : 'General / Mixed';
+  S.notes        = [langs&&'Speaks: '+langs, hobbies&&'Hobbies: '+hobbies, 'Learns best by: '+(selLS?selLS.dataset.ls:'visual')].filter(Boolean).join('. ');
+  S.style        = 'socratic';
+  S.learningGoal = 'critical';
+  S.goal         = 'Build strong critical thinking';
+  S.sessionStart = Date.now();
+  document.getElementById('ob').style.display = 'none';
+  startAppSession();
+}
+
+// ── Launch: Student personal use ──
+function launchStudent() {
+  const name      = document.getElementById('obs-name').value.trim();
+  const age       = document.getElementById('obs-age').value;
+  const subjects  = [...document.querySelectorAll('#s-subject-chips .subject-chip.sel')].map(el=>el.dataset.s);
+  const school    = document.getElementById('obs-school').value.trim();
+  const langs     = document.getElementById('obs-langs').value.trim();
+  const hobbies   = document.getElementById('obs-hobbies').value.trim();
+  const struggles = document.getElementById('obs-struggles').value.trim();
+  const selLS     = document.querySelector('#obs3 .learn-style-card.sel');
+  const selStyle  = document.querySelector('#s-style-grid .style-card.sel');
+  const selGoal   = document.querySelector('#s-goal-chips .goal-chip.sel');
+  const goalMap   = { critical:'Build strong critical thinking', homework:'Homework & exam help', curiosity:'Explore & stay curious' };
+  S.name         = name;
+  S.age          = age;
+  S.school       = school;
+  S.subj         = subjects.length ? subjects.join(', ') : 'General / Mixed';
+  S.style        = selStyle ? selStyle.dataset.s : 'socratic';
+  S.learningGoal = selGoal  ? selGoal.dataset.g  : 'critical';
+  S.goal         = goalMap[S.learningGoal];
+  S.notes        = [langs&&'Languages: '+langs, hobbies&&'Hobbies: '+hobbies, 'Learns best by: '+(selLS?selLS.dataset.ls:'visual'), struggles&&'Struggles with: '+struggles].filter(Boolean).join('. ');
+  S.sessionStart = Date.now();
+  document.getElementById('ob-student').style.display = 'none';
+  startAppSession();
+}
+
+// ── Shared app launch ──
+function startAppSession() {
   document.getElementById('app').style.display = 'flex';
   document.getElementById('app').classList.add('show');
-
-  // Header
-  document.getElementById('chip-av').textContent = S.name[0].toUpperCase();
-  document.getElementById('chip-name').textContent = `${S.name}, ${S.age}`;
-
-
-  // Dev panel
+  document.getElementById('chip-av').textContent   = S.name[0].toUpperCase();
+  document.getElementById('chip-name').textContent = S.age ? `${S.name}, ${S.age}` : S.name;
   document.getElementById('d-name').textContent    = S.name;
-  document.getElementById('d-age').textContent     = S.age;
+  document.getElementById('d-age').textContent     = S.age || '—';
   document.getElementById('d-school').textContent  = S.school || '—';
   document.getElementById('d-subj').textContent    = S.subj;
   document.getElementById('d-goal').textContent    = S.goal || '—';
   document.getElementById('d-notes').textContent   = S.notes || '—';
   document.getElementById('d-conf').textContent    = `${TEMP} / ${MAX_TOK}`;
   document.getElementById('d-model').textContent   = MODEL;
-  document.getElementById('d-updates').textContent = S.parentUpdates;
-
-  const styleLabels = {socratic:'Socratic Guide',stepbystep:'Step by Step',friendly:'Warm & Patient',challenge:'Challenge Mode'};
-  document.getElementById('d-style').textContent = styleLabels[S.style];
-
-  // Build starter questions
+  document.getElementById('d-updates').textContent = S.parentUpdates || '—';
+  const styleLabels = { socratic:'Socratic Guide', stepbystep:'Step by Step', friendly:'Warm & Patient', challenge:'Challenge Mode' };
+  document.getElementById('d-style').textContent = styleLabels[S.style] || S.style || '—';
   buildStarters();
-
-  // Auto-load Needle: school curriculum first, then subject URL as fallback
   const curriculumUrl = S.schoolCurriculum || SUBJECT_URLS[S.subj];
   if (curriculumUrl) {
-    const loadLabel = S.schoolCurriculum
-      ? `Loading ${S.school || 'school'} curriculum via Needle...`
-      : 'Loading subject material via Needle...';
-    toast(loadLabel, 'ok');
+    toast(S.schoolCurriculum ? `Loading ${S.school||'school'} curriculum via Needle...` : 'Loading subject material via Needle...', 'ok');
     autoLoadNeedle(curriculumUrl);
-  } else {
   }
 
   document.getElementById('sbtn').disabled = false;
@@ -3242,16 +3916,28 @@ function showLoginScreen() {
   document.getElementById('school-screen').style.display = 'none';
   document.getElementById('admin-screen').style.display = 'none';
   document.getElementById('ob').style.display = 'none';
+  document.getElementById('ob-student').style.display = 'none';
+  document.getElementById('parent-dashboard').style.display = 'none';
 }
 
 function chooseFamilie() {
   document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('ob-subchoice').style.display = 'block';
+  document.getElementById('ob-parent-flow').style.display = 'none';
+  document.getElementById('ob-child-flow').style.display = 'none';
   document.getElementById('ob').style.display = 'flex';
 }
 
 function chooseSchule() {
   document.getElementById('login-screen').style.display = 'none';
   document.getElementById('school-screen').style.display = 'flex';
+}
+
+function chooseStudent() {
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('ob-student').style.display = 'flex';
+  obStudentStep = 1;
+  renderObStudent();
 }
 
 function schTab(tab) {
@@ -3448,7 +4134,7 @@ function launchAsSchoolStudent(student) {
   document.getElementById('sbtn').disabled = false;
 
   // Auto-load curriculum if school is known
-  if (S.school) lookupSchool(S.school);
+  if (S.school) lookupSchoolGeneric(S.school, 'obs-school-status');
 
   setTimeout(() => {
     const goalLine = S.goal ? ` Your goal today: ${goalMap[S.learningGoal]}.` : '';
