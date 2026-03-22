@@ -3297,8 +3297,7 @@ function renderParentDashboard() {
         ${c.notes?`<div class="child-setting-row"><span class="child-setting-label">Notes</span><span class="child-setting-val" style="font-size:11px;max-width:160px;text-align:right;color:var(--ink3)">${c.notes.slice(0,40)}${c.notes.length>40?'...':''}</span></div>`:''}
       </div>
       <div class="child-card-btns">
-        <button class="btn-start-child" onclick="launchFromDashboard(${i})">Start Session →</button>
-        <button class="btn-edit-child" onclick="toast('Settings editable after your first session','ok')">Edit</button>
+        <button class="btn-edit-child" style="flex:1" onclick="toast('Edit settings coming soon','ok')">Edit Settings</button>
       </div>
     </div>`;
   }).join('');
