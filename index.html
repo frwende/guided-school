@@ -4803,7 +4803,7 @@ async function saveSession() {
 
 // Alt+D opens the dev panel (hidden from UI)
 document.addEventListener('keydown', e => {
-  if (e.altKey && e.key.toLowerCase() === 'd') toggleDev();
+  if (e.altKey && e.code === 'KeyD') toggleDev();
 });
 </script>
 </body>
