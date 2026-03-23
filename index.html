@@ -2596,9 +2596,170 @@ body { background: #FFFFFF; }
 
 /* Footer */
 .lp-footer { text-align: center; padding: 12px; font-size: 13px; color: #AAA; flex-shrink: 0; }
+
+/* ── How It Works overlay ── */
+#hiw-overlay {
+  display: none;
+  position: fixed; inset: 0; z-index: 600;
+  background: rgba(7,13,9,.72);
+  backdrop-filter: blur(6px);
+  align-items: flex-start;
+  justify-content: center;
+  padding: 32px 16px 48px;
+  overflow-y: auto;
+}
+.hiw-panel {
+  background: #F7F6F3;
+  border-radius: 28px;
+  width: 100%; max-width: 740px;
+  box-shadow: 0 24px 80px rgba(0,0,0,.35);
+  overflow: hidden;
+  animation: fadeUp .45s cubic-bezier(.16,1,.3,1) both;
+}
+.hiw-header {
+  background: linear-gradient(150deg, #1A3328 0%, #2E5C44 100%);
+  padding: 40px 48px 36px;
+  position: relative;
+}
+.hiw-close {
+  position: absolute; top: 20px; right: 20px;
+  background: rgba(255,255,255,.12); border: none; border-radius: 50%;
+  width: 36px; height: 36px; cursor: pointer; color: #fff; font-size: 18px;
+  display: flex; align-items: center; justify-content: center;
+  transition: background .15s;
+}
+.hiw-close:hover { background: rgba(255,255,255,.22); }
+.hiw-eyebrow {
+  font-size: 11px; font-weight: 700; letter-spacing: 2.5px; text-transform: uppercase;
+  color: rgba(255,255,255,.55); margin-bottom: 10px;
+}
+.hiw-title {
+  font-family: var(--font-serif);
+  font-size: 36px; font-weight: 700; color: #fff;
+  letter-spacing: -.5px; line-height: 1.15;
+}
+.hiw-title span { color: var(--gold2); }
+.hiw-subtitle { font-size: 15px; color: rgba(255,255,255,.65); margin-top: 10px; line-height: 1.6; }
+.hiw-steps { padding: 36px 48px 40px; display: flex; flex-direction: column; gap: 4px; }
+.hiw-step {
+  display: flex; gap: 20px; align-items: flex-start;
+  padding: 20px 0;
+  border-bottom: 1px solid var(--border-soft);
+}
+.hiw-step:last-child { border-bottom: none; }
+.hiw-step-left { flex-shrink: 0; display: flex; flex-direction: column; align-items: center; gap: 6px; }
+.hiw-num {
+  width: 36px; height: 36px; border-radius: 50%;
+  background: var(--forest); color: #fff;
+  font-size: 13px; font-weight: 800;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.hiw-icon { font-size: 22px; line-height: 1; }
+.hiw-step-body { flex: 1; }
+.hiw-step-title {
+  font-family: var(--font-serif);
+  font-size: 17px; font-weight: 700; color: var(--ink);
+  margin-bottom: 6px; letter-spacing: -.2px;
+}
+.hiw-step-desc { font-size: 14px; color: var(--ink3); line-height: 1.7; }
+.hiw-step-desc strong { color: var(--ink2); font-weight: 600; }
+.hiw-footer {
+  background: var(--cream2); padding: 24px 48px;
+  display: flex; align-items: center; justify-content: space-between; gap: 16px;
+  flex-wrap: wrap;
+}
+.hiw-footer-note { font-size: 13px; color: var(--ink3); }
+.hiw-cta {
+  background: var(--forest); color: #fff; border: none; border-radius: 12px;
+  padding: 12px 28px; font-size: 14px; font-weight: 700; cursor: pointer;
+  font-family: var(--font-body); transition: background .15s;
+}
+.hiw-cta:hover { background: var(--forest2); }
 </style>
 </head>
 <body>
+
+<!-- ╔══════════════════════════════════════════╗ -->
+<!-- ║          HOW IT WORKS OVERLAY           ║ -->
+<!-- ╚══════════════════════════════════════════╝ -->
+<div id="hiw-overlay" onclick="if(event.target===this)closeHiw()">
+  <div class="hiw-panel">
+
+    <div class="hiw-header">
+      <button class="hiw-close" onclick="closeHiw()">✕</button>
+      <div class="hiw-eyebrow">The Guided Method</div>
+      <div class="hiw-title">How it <span>works</span></div>
+      <div class="hiw-subtitle">Seven things that make Guided different from every other AI tool your child has tried.</div>
+    </div>
+
+    <div class="hiw-steps">
+
+      <div class="hiw-step">
+        <div class="hiw-step-left"><div class="hiw-num">1</div><div class="hiw-icon">⚡</div></div>
+        <div class="hiw-step-body">
+          <div class="hiw-step-title">Set up in 2 minutes</div>
+          <div class="hiw-step-desc">Parent, teacher, or student — pick your path. A parent creates a profile with their child's name, age, subjects, and school. A teacher sets up an entire class with PINs and learning goals. A student onboards themselves in 4 steps. <strong>Guided automatically adapts its language, analogies, and curriculum to match.</strong></div>
+        </div>
+      </div>
+
+      <div class="hiw-step">
+        <div class="hiw-step-left"><div class="hiw-num">2</div><div class="hiw-icon">💬</div></div>
+        <div class="hiw-step-body">
+          <div class="hiw-step-title">Ask anything</div>
+          <div class="hiw-step-desc">Homework problem, confusing concept, exam prep. Type it, paste it, or snap a photo of the page. <strong>Guided understands German, Swiss, UK, US, French, Italian, and IB curricula</strong> — so it knows what your school actually teaches.</div>
+        </div>
+      </div>
+
+      <div class="hiw-step">
+        <div class="hiw-step-left"><div class="hiw-num">3</div><div class="hiw-icon">🧠</div></div>
+        <div class="hiw-step-body">
+          <div class="hiw-step-title">Guided never gives the answer</div>
+          <div class="hiw-step-desc">This is what makes us fundamentally different. Instead of solving it for your child, Guided asks the right questions — leading them step by step to figure it out themselves. <strong>Not because we're withholding information. Because real understanding only happens when you think it through yourself.</strong></div>
+        </div>
+      </div>
+
+      <div class="hiw-step">
+        <div class="hiw-step-left"><div class="hiw-num">4</div><div class="hiw-icon">💡</div></div>
+        <div class="hiw-step-body">
+          <div class="hiw-step-title">When they're stuck, the Hint System helps</div>
+          <div class="hiw-step-desc">Three levels of hints per session, each a little more specific. Your child decides how much help they need — and <strong>learns to push through difficulty before reaching for the next one.</strong></div>
+        </div>
+      </div>
+
+      <div class="hiw-step">
+        <div class="hiw-step-left"><div class="hiw-num">5</div><div class="hiw-icon">✨</div></div>
+        <div class="hiw-step-body">
+          <div class="hiw-step-title">Every breakthrough gets recognised</div>
+          <div class="hiw-step-desc">When your child arrives at the answer on their own, Guided celebrates the moment — names exactly what they just figured out, explains why it matters, and immediately raises the bar with a harder question. <strong>We call these AHA moments. You'll see every single one.</strong></div>
+        </div>
+      </div>
+
+      <div class="hiw-step">
+        <div class="hiw-step-left"><div class="hiw-num">6</div><div class="hiw-icon">📊</div></div>
+        <div class="hiw-step-body">
+          <div class="hiw-step-title">You see the full picture</div>
+          <div class="hiw-step-desc">The Parent Dashboard tracks <strong>Bloom's Taxonomy levels in real time</strong> — from basic recall to deep analysis and creative thinking. You see session duration, hint usage, AHA moments, and whether your child is actually thinking or just going through the motions. No hovering required.</div>
+        </div>
+      </div>
+
+      <div class="hiw-step">
+        <div class="hiw-step-left"><div class="hiw-num">7</div><div class="hiw-icon">🏫</div></div>
+        <div class="hiw-step-body">
+          <div class="hiw-step-title">For schools: the tutor that knows today's lesson</div>
+          <div class="hiw-step-desc">Teachers upload what they covered in class — a quick note, a worksheet, a photo of the board. Guided uses this so that when a student asks for help that evening, <strong>the tutor knows exactly what was taught, what was assigned, and what comes next.</strong> No other AI tool can do this.</div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="hiw-footer">
+      <div class="hiw-footer-note">Free to try — no credit card required.</div>
+      <button class="hiw-cta" onclick="closeHiw();showLoginFromLanding()">Get started free →</button>
+    </div>
+
+  </div>
+</div>
 
 <!-- ╔══════════════════════════════════════════╗ -->
 <!-- ║            LANDING PAGE                 ║ -->
@@ -2617,7 +2778,7 @@ body { background: #FFFFFF; }
       <span>Guided</span>
     </div>
     <div class="lp-nav-links">
-      <a href="#">How it works</a>
+      <a href="#" onclick="openHiw();return false;">How it works</a>
       <a href="#" onclick="showSchoolFromLanding();return false;">For Schools</a>
       <a href="#" onclick="showFamilyFromLanding();return false;">For Families</a>
     </div>
@@ -6137,6 +6298,15 @@ function showFamilyFromLanding() {
 }
 
 // ── Show signin screen from landing ──
+function openHiw() {
+  const el = document.getElementById('hiw-overlay');
+  el.style.display = 'flex';
+  el.scrollTop = 0;
+}
+function closeHiw() {
+  document.getElementById('hiw-overlay').style.display = 'none';
+}
+
 function goHome() {
   // Hide all screens, go back to landing
   ['app','parent-dashboard','admin-screen','school-screen','signin-screen','login-screen','ob','ob-student','setup-screen'].forEach(id => {
