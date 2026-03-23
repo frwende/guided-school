@@ -948,6 +948,57 @@ input[type=range]::-webkit-slider-thumb:hover {
 }
 .btn-whylearn:hover { background: #E0E7FF; }
 
+/* Abitur toggle panel */
+.abitur-toggle-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: 1.5px solid var(--border);
+  background: var(--surface);
+  transition: border-color .15s, background .15s;
+  user-select: none;
+}
+.abitur-toggle-row:hover { border-color: var(--forest3); background: var(--cream2); }
+.abitur-toggle-row.active { border-color: var(--forest); background: #EBF2EC; }
+.abitur-toggle-label { flex: 1; font-size: 14px; font-weight: 600; color: var(--ink2); }
+.abitur-toggle-sub { font-size: 12px; color: var(--ink4); font-weight: 400; }
+.abitur-pill-switch {
+  width: 40px; height: 22px;
+  background: var(--border2);
+  border-radius: 11px;
+  position: relative;
+  transition: background .2s;
+  flex-shrink: 0;
+}
+.abitur-pill-switch::after {
+  content: '';
+  position: absolute;
+  top: 3px; left: 3px;
+  width: 16px; height: 16px;
+  background: white;
+  border-radius: 50%;
+  transition: transform .2s;
+  box-shadow: 0 1px 3px rgba(0,0,0,.2);
+}
+.abitur-toggle-row.active .abitur-pill-switch { background: var(--forest); }
+.abitur-toggle-row.active .abitur-pill-switch::after { transform: translateX(18px); }
+.abitur-setup-panel {
+  display: none;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 10px;
+  padding: 14px 16px;
+  border-radius: 10px;
+  border: 1.5px solid #C8DFCA;
+  background: #F2F8F3;
+}
+.abitur-setup-panel.visible { display: flex; }
+.abitur-lk-row { display: flex; gap: 8px; }
+.abitur-lk-row .fi { flex: 1; }
+
 /* Input area */
 .input-area {
   padding: 16px 24px 22px;
@@ -3153,6 +3204,40 @@ body { background: #FFFFFF; }
           <label>Languages you speak</label>
           <input class="fi" id="obs-langs" placeholder="e.g. English, German, French..."/>
         </div>
+        <div class="fgroup">
+          <div class="abitur-toggle-row" id="abitur-toggle-row" onclick="toggleAbiturPanel()">
+            <div>
+              <div class="abitur-toggle-label">🎓 Preparing for Abitur?</div>
+              <div class="abitur-toggle-sub">Germany — loads official Prüfungsschwerpunkte via Needle</div>
+            </div>
+            <div class="abitur-pill-switch"></div>
+          </div>
+          <div class="abitur-setup-panel" id="abitur-setup-panel">
+            <div class="fgroup" style="margin:0">
+              <label>Bundesland</label>
+              <select class="fi" id="obs-bundesland">
+                <option value="">Select your Bundesland...</option>
+                <option value="Bayern">Bayern</option>
+                <option value="NRW">Nordrhein-Westfalen (NRW)</option>
+                <option value="BW">Baden-Württemberg</option>
+                <option value="Berlin">Berlin</option>
+                <option value="Hamburg">Hamburg</option>
+                <option value="Other">Anderes Bundesland</option>
+              </select>
+            </div>
+            <div class="fgroup" style="margin:0">
+              <label>Leistungskurse (LK) <span style="color:var(--ink4);font-weight:400">max. 2</span></label>
+              <div class="abitur-lk-row">
+                <input class="fi" id="obs-lk1" placeholder="z.B. Mathematik"/>
+                <input class="fi" id="obs-lk2" placeholder="z.B. Physik"/>
+              </div>
+            </div>
+            <div class="fgroup" style="margin:0">
+              <label>Grundkurse (GK) <span style="color:var(--ink4);font-weight:400">optional, kommagetrennt</span></label>
+              <input class="fi" id="obs-gk" placeholder="z.B. Deutsch, Geschichte, Englisch, Biologie..."/>
+            </div>
+          </div>
+        </div>
       </div>
 
       <!-- S3: Your style -->
@@ -3784,6 +3869,75 @@ const SUBJECT_URLS = {
   Economics:         'https://en.wikipedia.org/wiki/Economics',
 };
 
+// ── Abitur: official Bundesland Abitur portals (no Wikipedia) ──
+const ABITUR_BASE_URLS = {
+  Bayern:  'https://www.isb.bayern.de/gymnasium/abitur/',
+  NRW:     'https://www.schulentwicklung.nrw.de/lehrplaene/lehrplannavigator-s-ii.html',
+  BW:      'https://www.schule-bw.de/faecher-und-schularten/allgemein-bildende-schulen/gymnasium/abitur',
+  Berlin:  'https://www.berlin.de/sen/bildung/schule/pruefungen-und-abschluesse/abitur/',
+  Hamburg: 'https://www.hamburg.de/bsb/abitur/',
+};
+
+// Subject-specific Abitur pages (official — Senate / Kultusministerium)
+const ABITUR_SUBJECT_URLS = {
+  Bayern: {
+    Mathematik:  'https://www.isb.bayern.de/gymnasium/abitur/pruefungsaufgaben/mathematik/',
+    Deutsch:     'https://www.isb.bayern.de/gymnasium/abitur/pruefungsaufgaben/deutsch/',
+    Englisch:    'https://www.isb.bayern.de/gymnasium/abitur/pruefungsaufgaben/englisch/',
+    Physik:      'https://www.isb.bayern.de/gymnasium/abitur/pruefungsaufgaben/physik/',
+    Chemie:      'https://www.isb.bayern.de/gymnasium/abitur/pruefungsaufgaben/chemie/',
+    Biologie:    'https://www.isb.bayern.de/gymnasium/abitur/pruefungsaufgaben/biologie/',
+    Geschichte:  'https://www.isb.bayern.de/gymnasium/abitur/pruefungsaufgaben/geschichte/',
+    Geographie:  'https://www.isb.bayern.de/gymnasium/abitur/pruefungsaufgaben/geographie/',
+    Wirtschaft:  'https://www.isb.bayern.de/gymnasium/abitur/pruefungsaufgaben/wirtschaftswissenschaften/',
+    Informatik:  'https://www.isb.bayern.de/gymnasium/abitur/pruefungsaufgaben/informatik/',
+    Musik:       'https://www.isb.bayern.de/gymnasium/abitur/pruefungsaufgaben/musik/',
+    Kunst:       'https://www.isb.bayern.de/gymnasium/abitur/pruefungsaufgaben/kunst/',
+    Franzoesisch:'https://www.isb.bayern.de/gymnasium/abitur/pruefungsaufgaben/franzoesisch/',
+    Latein:      'https://www.isb.bayern.de/gymnasium/abitur/pruefungsaufgaben/latein/',
+    Sozialkunde: 'https://www.isb.bayern.de/gymnasium/abitur/pruefungsaufgaben/sozialkunde/',
+  },
+  NRW: {
+    Mathematik:  'https://www.schulentwicklung.nrw.de/e/upload/abitur/mathematik/index.html',
+    Deutsch:     'https://www.schulentwicklung.nrw.de/e/upload/abitur/deutsch/index.html',
+    Englisch:    'https://www.schulentwicklung.nrw.de/e/upload/abitur/englisch/index.html',
+    Physik:      'https://www.schulentwicklung.nrw.de/e/upload/abitur/physik/index.html',
+    Chemie:      'https://www.schulentwicklung.nrw.de/e/upload/abitur/chemie/index.html',
+    Biologie:    'https://www.schulentwicklung.nrw.de/e/upload/abitur/biologie/index.html',
+    Geschichte:  'https://www.schulentwicklung.nrw.de/e/upload/abitur/geschichte/index.html',
+    Informatik:  'https://www.schulentwicklung.nrw.de/e/upload/abitur/informatik/index.html',
+    Wirtschaft:  'https://www.schulentwicklung.nrw.de/e/upload/abitur/wirtschaft/index.html',
+  },
+  BW: {
+    Mathematik:  'https://www.schule-bw.de/faecher-und-schularten/allgemein-bildende-schulen/gymnasium/abitur/mathematik',
+    Deutsch:     'https://www.schule-bw.de/faecher-und-schularten/allgemein-bildende-schulen/gymnasium/abitur/deutsch',
+    Englisch:    'https://www.schule-bw.de/faecher-und-schularten/allgemein-bildende-schulen/gymnasium/abitur/englisch',
+    Geschichte:  'https://www.schule-bw.de/faecher-und-schularten/allgemein-bildende-schulen/gymnasium/abitur/geschichte',
+    Biologie:    'https://www.schule-bw.de/faecher-und-schularten/allgemein-bildende-schulen/gymnasium/abitur/biologie',
+    Chemie:      'https://www.schule-bw.de/faecher-und-schularten/allgemein-bildende-schulen/gymnasium/abitur/chemie',
+    Physik:      'https://www.schule-bw.de/faecher-und-schularten/allgemein-bildende-schulen/gymnasium/abitur/physik',
+  },
+  Berlin: {
+    Mathematik:  'https://www.berlin.de/sen/bildung/unterricht/faecher-rahmenlehrplaene/rahmenlehrplaene/mathematik/',
+    Deutsch:     'https://www.berlin.de/sen/bildung/unterricht/faecher-rahmenlehrplaene/rahmenlehrplaene/deutsch/',
+    Englisch:    'https://www.berlin.de/sen/bildung/unterricht/faecher-rahmenlehrplaene/rahmenlehrplaene/englisch/',
+    Geschichte:  'https://www.berlin.de/sen/bildung/unterricht/faecher-rahmenlehrplaene/rahmenlehrplaene/geschichte/',
+    Biologie:    'https://www.berlin.de/sen/bildung/unterricht/faecher-rahmenlehrplaene/rahmenlehrplaene/biologie/',
+    Physik:      'https://www.berlin.de/sen/bildung/unterricht/faecher-rahmenlehrplaene/rahmenlehrplaene/physik/',
+    Chemie:      'https://www.berlin.de/sen/bildung/unterricht/faecher-rahmenlehrplaene/rahmenlehrplaene/chemie/',
+  },
+  Hamburg: {
+    Mathematik:  'https://www.hamburg.de/bsb/lehrplaene-bildungsplaene/mathematik/',
+    Deutsch:     'https://www.hamburg.de/bsb/lehrplaene-bildungsplaene/deutsch/',
+    Englisch:    'https://www.hamburg.de/bsb/lehrplaene-bildungsplaene/englisch/',
+    Geschichte:  'https://www.hamburg.de/bsb/lehrplaene-bildungsplaene/geschichte/',
+    Biologie:    'https://www.hamburg.de/bsb/lehrplaene-bildungsplaene/biologie/',
+    Physik:      'https://www.hamburg.de/bsb/lehrplaene-bildungsplaene/physik/',
+    Chemie:      'https://www.hamburg.de/bsb/lehrplaene-bildungsplaene/chemie/',
+    Informatik:  'https://www.hamburg.de/bsb/lehrplaene-bildungsplaene/informatik/',
+  },
+};
+
 // ══════════════════════════════════════════════
 //  SYSTEM PROMPT
 // ══════════════════════════════════════════════
@@ -3825,10 +3979,22 @@ TEACHING METHOD — CHALLENGE MODE:
 ⑤ Reserve genuine praise for when they truly earn it`,
   };
 
+  const abiturContext = S.abitur ? `
+━━━━━━━━━━━━━━━━━━━━━━━━
+ABITUR CONTEXT
+━━━━━━━━━━━━━━━━━━━━━━━━
+This student is preparing for the German Abitur in ${S.bundesland}.
+${S.lk.length ? `Leistungskurse (LK — exam-relevant, high depth): ${S.lk.join(', ')}` : ''}
+${S.gk.length ? `Grundkurse (GK): ${S.gk.join(', ')}` : ''}
+${S.currentSubject ? `Currently active subject: ${S.currentSubject}` : ''}
+Prüfungsschwerpunkte have been loaded into Needle — use them to ask specific, exam-level questions.
+When the topic matches an LK: go deeper, use Abitur-style analysis questions, push for Bewertung/Evaluation level.` : '';
+
   return `You are Guided, a world-class personal AI tutor for ${S.name}, aged ${S.age}, studying ${S.subj}.
 ${S.school ? `School: ${S.school}` : ''}
 ${S.goal ? `Session goal: ${S.goal}` : ''}
 ${S.notes ? `IMPORTANT about this student: ${S.notes}` : ''}
+${abiturContext}
 
 ━━━━━━━━━━━━━━━━━━━━━━━━
 CRITICAL RULE — NEVER GIVE A DIRECT ANSWER
@@ -4304,6 +4470,12 @@ function launchStudent() {
   const selStyle  = document.querySelector('#s-style-grid .style-card.sel');
   const selGoal   = document.querySelector('#s-goal-chips .goal-chip.sel');
   const goalMap   = { critical:'Build strong critical thinking', homework:'Homework & exam help', curiosity:'Explore & stay curious' };
+  // Abitur data
+  const abiturOn  = document.getElementById('abitur-toggle-row').classList.contains('active');
+  const bundesland= document.getElementById('obs-bundesland').value;
+  const lk1       = document.getElementById('obs-lk1').value.trim();
+  const lk2       = document.getElementById('obs-lk2').value.trim();
+  const gkRaw     = document.getElementById('obs-gk').value.trim();
   S.name         = name;
   S.age          = age;
   S.school       = school;
@@ -4313,7 +4485,13 @@ function launchStudent() {
   S.goal         = goalMap[S.learningGoal];
   S.notes        = [langs&&'Languages: '+langs, hobbies&&'Hobbies: '+hobbies, 'Learns best by: '+(selLS?selLS.dataset.ls:'visual'), struggles&&'Struggles with: '+struggles].filter(Boolean).join('. ');
   S.sessionStart = Date.now();
-  S.userType = 'solo';
+  S.userType     = 'solo';
+  S.abitur       = abiturOn && !!bundesland;
+  S.bundesland   = bundesland || '';
+  S.lk           = [lk1, lk2].filter(Boolean);
+  S.gk           = gkRaw ? gkRaw.split(',').map(s=>s.trim()).filter(Boolean) : [];
+  S.currentSubject = S.lk[0] || '';
+  S.subjectLog   = [];
   document.getElementById('ob-student').style.display = 'none';
   startAppSession();
 }
@@ -4345,10 +4523,16 @@ function startAppSession() {
   }
 
   buildStarters();
-  const curriculumUrl = S.schoolCurriculum || SUBJECT_URLS[S.subj];
-  if (curriculumUrl) {
-    toast(S.schoolCurriculum ? `Loading ${S.school||'school'} curriculum via Needle...` : 'Loading subject material via Needle...', 'ok');
-    autoLoadNeedle(curriculumUrl);
+  if (S.abitur && S.bundesland && S.bundesland !== 'Other') {
+    const lkLabel = S.lk.length ? S.lk.join(' & ') : S.bundesland;
+    toast(`Lade Abitur-Prüfungsschwerpunkte: ${lkLabel} (${S.bundesland})...`, 'ok');
+    autoLoadAbitur();
+  } else {
+    const curriculumUrl = S.schoolCurriculum || SUBJECT_URLS[S.subj];
+    if (curriculumUrl) {
+      toast(S.schoolCurriculum ? `Loading ${S.school||'school'} curriculum via Needle...` : 'Loading subject material via Needle...', 'ok');
+      autoLoadNeedle(curriculumUrl);
+    }
   }
 
   document.getElementById('sbtn').disabled = false;
@@ -4384,6 +4568,7 @@ async function sendMsg(isHint = false, isGotIt = false) {
     else addBubble('user', text);
     S.events.push({ who: 'student', text: text || '[Bild]', type: 'message', ts: Date.now() });
     ta.value = ''; ta.style.height = 'auto';
+    if (S.abitur) detectAndLogSubject(text);
   }
 
   // Build content for AI: if image, prepend a note
@@ -4577,6 +4762,113 @@ async function autoLoadNeedle(url) {
   } catch(e) {
     console.error('Needle auto-load:', e);
   }
+}
+
+// ── Abitur: auto-load multiple subject pages into one Needle collection ──
+function normalizeSubjectName(s) {
+  const map = {
+    mathe:'Mathematik', mathematik:'Mathematik', math:'Mathematik',
+    physik:'Physik', physics:'Physik',
+    chemie:'Chemie', chemistry:'Chemie',
+    biologie:'Biologie', biology:'Biologie', bio:'Biologie',
+    deutsch:'Deutsch', german:'Deutsch',
+    englisch:'Englisch', english:'Englisch',
+    geschichte:'Geschichte', history:'Geschichte',
+    geographie:'Geographie', geography:'Geographie', geo:'Geographie',
+    informatik:'Informatik', cs:'Informatik', 'computer science':'Informatik',
+    wirtschaft:'Wirtschaft', economics:'Wirtschaft', wirt:'Wirtschaft',
+    musik:'Musik', music:'Musik',
+    kunst:'Kunst', art:'Kunst',
+    franzoesisch:'Franzoesisch', französisch:'Franzoesisch', french:'Franzoesisch',
+    latein:'Latein', latin:'Latein',
+    sozialkunde:'Sozialkunde', politik:'Sozialkunde',
+  };
+  return map[s.toLowerCase().trim()] || s.trim();
+}
+
+function getAbiturUrls(bundesland, lkList, gkList) {
+  const subjectMap = ABITUR_SUBJECT_URLS[bundesland] || {};
+  const baseUrl    = ABITUR_BASE_URLS[bundesland];
+  const urls = [];
+  if (baseUrl) urls.push(baseUrl);
+  const allSubjects = [...(lkList||[]), ...(gkList||[])];
+  for (const raw of allSubjects) {
+    const norm = normalizeSubjectName(raw);
+    const url  = subjectMap[norm];
+    if (url && !urls.includes(url)) urls.push(url);
+  }
+  return urls;
+}
+
+async function autoLoadAbitur() {
+  const urls = getAbiturUrls(S.bundesland, S.lk, S.gk);
+  if (!urls.length) return;
+  try {
+    const cr = await fetch('https://needle-ai.com/api/v1/collections', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'x-needle-api-key': ND_KEY },
+      body: JSON.stringify({ name: `guided_abitur_${S.name}_${Date.now()}` })
+    });
+    if (!cr.ok) throw new Error(`Collection ${cr.status}`);
+    const cd = await cr.json();
+    S.ndCollId = cd.id;
+    document.getElementById('d-coll').textContent = cd.id;
+    let loaded = 0;
+    for (const url of urls) {
+      try {
+        const fr = await fetch(`https://needle-ai.com/api/v1/collections/${S.ndCollId}/files`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'x-needle-api-key': ND_KEY },
+          body: JSON.stringify({ url })
+        });
+        if (fr.ok) loaded++;
+      } catch(e) { console.warn('Needle Abitur file:', url, e); }
+    }
+    S.ndReady = true;
+    const lkLabel = S.lk.length ? S.lk.join(' + ') : S.bundesland;
+    toast(`Abitur ${S.bundesland}: ${loaded} Quellen geladen (${lkLabel}) ✓`, 'ok');
+  } catch(e) {
+    console.error('autoLoadAbitur:', e);
+  }
+}
+
+// ── Detect which subject is currently being discussed ──
+const SUBJECT_KEYWORDS = {
+  Mathematik:  ['mathe', 'math', 'algebra', 'geometrie', 'analysis', 'integral', 'differenzial', 'gleichung', 'funktion', 'wahrscheinlichkeit', 'statistik', 'vektoren', 'matrix', 'trigonometrie'],
+  Physik:      ['physik', 'physics', 'kraft', 'energie', 'impuls', 'masse', 'beschleunigung', 'elektrizität', 'magnetfeld', 'quantenmechanik', 'thermodynamik', 'wellen', 'optik', 'kernphysik'],
+  Chemie:      ['chemie', 'chemistry', 'reaktion', 'element', 'molekül', 'atom', 'bindung', 'säure', 'base', 'oxidation', 'reduktion', 'organisch', 'stöchiometrie', 'molare', 'elektrochemie'],
+  Biologie:    ['biologie', 'biology', 'zelle', 'evolution', 'genetik', 'dna', 'rna', 'ökosystem', 'photosynthese', 'stoffwechsel', 'erbgut', 'mutation', 'ökologie', 'nervensystem'],
+  Deutsch:     ['deutsch', 'literatur', 'gedicht', 'roman', 'grammatik', 'aufsatz', 'interpretation', 'analyse', 'goethe', 'schiller', 'kafka', 'brecht', 'faust', 'textanalyse', 'epoche'],
+  Englisch:    ['english', 'englisch', 'grammar', 'vocabulary', 'essay', 'shakespeare', 'novel', 'poem', 'british', 'american', 'tense', 'clause'],
+  Geschichte:  ['geschichte', 'history', 'weltkrieg', 'historisch', 'revolution', 'weimarer', 'nationalsozialismus', 'imperialismus', 'reformation', 'aufklärung', 'kalter krieg', 'kolonialismus'],
+  Geographie:  ['geographie', 'geography', 'klima', 'geologie', 'bevölkerung', 'urbanisierung', 'landschaft', 'erosion', 'tektonik', 'globalisierung', 'migration'],
+  Informatik:  ['informatik', 'computer', 'algorithmus', 'programmier', 'datenstruktur', 'software', 'hardware', 'datenbank', 'netzwerk', 'rekursion', 'objektorientiert'],
+  Wirtschaft:  ['wirtschaft', 'economics', 'markt', 'inflation', 'bip', 'volkswirtschaft', 'angebot', 'nachfrage', 'konjunktur', 'unternehmen', 'finanzmarkt', 'währung'],
+  Sozialkunde: ['politik', 'demokratie', 'verfassung', 'grundgesetz', 'bundestag', 'wahlen', 'sozialstaat', 'menschenrechte', 'gesellschaft', 'soziologie'],
+};
+
+function detectAndLogSubject(text) {
+  if (!text) return;
+  const lower = text.toLowerCase();
+  for (const [subject, keywords] of Object.entries(SUBJECT_KEYWORDS)) {
+    if (keywords.some(kw => lower.includes(kw))) {
+      if (S.currentSubject !== subject) {
+        S.currentSubject = subject;
+        if (!S.subjectLog) S.subjectLog = [];
+        S.subjectLog.push({ subject, ts: Date.now() });
+        console.log(`[Guided] Subject detected: ${subject}`);
+      }
+      return;
+    }
+  }
+}
+
+// ── Abitur toggle UI ──
+function toggleAbiturPanel() {
+  const row   = document.getElementById('abitur-toggle-row');
+  const panel = document.getElementById('abitur-setup-panel');
+  const isOn  = row.classList.toggle('active');
+  panel.classList.toggle('visible', isOn);
 }
 
 async function loadNeedle() {
