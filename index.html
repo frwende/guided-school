@@ -2104,6 +2104,7 @@ input[type=range]::-webkit-slider-thumb:hover {
 /* ── AUTH SCREENS: light theme (matches landing page) ── */
 #login-screen,
 #school-screen,
+#signin-screen,
 #ob,
 #ob-student,
 #setup-screen {
@@ -2117,12 +2118,14 @@ input[type=range]::-webkit-slider-thumb:hover {
 .login-container,
 #ob .ob-container,
 #school-screen .ob-container,
+#signin-screen .ob-container,
 #ob-student .ob-container { position: relative; z-index: 1; }
 #setup-screen > div { position: relative; z-index: 1; }
 
 /* ── BRAND BLOCK on dark ── */
 #login-screen .ob-wordmark,
 #school-screen .ob-wordmark,
+#signin-screen .ob-wordmark,
 #ob .ob-wordmark,
 #ob-student .ob-wordmark,
 #setup-screen .ob-wordmark {
@@ -2135,6 +2138,7 @@ input[type=range]::-webkit-slider-thumb:hover {
 
 #login-screen .ob-tagline,
 #school-screen .ob-tagline,
+#signin-screen .ob-tagline,
 #ob .ob-tagline,
 #ob-student .ob-tagline,
 #setup-screen .ob-tagline {
@@ -2146,6 +2150,7 @@ input[type=range]::-webkit-slider-thumb:hover {
 
 #login-screen .ob-brand-mark,
 #school-screen .ob-brand-mark,
+#signin-screen .ob-brand-mark,
 #ob .ob-brand-mark,
 #ob-student .ob-brand-mark,
 #setup-screen .ob-brand-mark {
@@ -2205,6 +2210,52 @@ input[type=range]::-webkit-slider-thumb:hover {
   font-size: 13px;
   line-height: 1.65;
 }
+
+/* ── Signin screen tabs ── */
+.si-tab-row { display:flex; border-bottom:1.5px solid var(--border); margin-bottom:0; }
+.si-tab {
+  flex:1; padding:14px; text-align:center;
+  font-size:13.5px; font-weight:700; cursor:pointer;
+  color:var(--ink4); border-bottom:2.5px solid transparent;
+  transition:.15s; margin-bottom:-1.5px;
+}
+.si-tab.active { color:var(--forest); border-bottom-color:var(--forest); }
+
+/* ── Save account banner ── */
+#save-account-banner {
+  display: none;
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 600;
+  background: var(--forest);
+  color: #fff;
+  border-radius: 18px;
+  padding: 18px 24px;
+  box-shadow: 0 8px 32px rgba(26,51,40,.35);
+  width: calc(100% - 48px);
+  max-width: 500px;
+  animation: fadeUp .4s cubic-bezier(.16,1,.3,1) both;
+}
+.sab-title { font-size:14px; font-weight:700; margin-bottom:4px; }
+.sab-sub { font-size:12px; opacity:.7; margin-bottom:14px; }
+.sab-row { display:flex; gap:8px; margin-bottom:8px; }
+.sab-row .fi {
+  flex:1; background:rgba(255,255,255,.12); border:1px solid rgba(255,255,255,.2);
+  color:#fff; border-radius:10px; padding:10px 14px; font-size:13px;
+}
+.sab-row .fi::placeholder { color:rgba(255,255,255,.45); }
+.sab-row .fi:focus { outline:none; background:rgba(255,255,255,.18); border-color:rgba(255,255,255,.4); }
+.sab-btns { display:flex; gap:8px; align-items:center; }
+.sab-save {
+  background:#fff; color:var(--forest); border:none; border-radius:10px;
+  padding:10px 20px; font-size:13px; font-weight:700; cursor:pointer;
+  transition:opacity .15s;
+}
+.sab-save:hover { opacity:.9; }
+.sab-skip { background:none; border:none; color:rgba(255,255,255,.55); font-size:12.5px; cursor:pointer; font-family:var(--font-body); }
+.sab-skip:hover { color:rgba(255,255,255,.85); }
 
 /* Change API keys button on dark bg */
 #login-screen button[onclick="showSetupScreen()"] {
@@ -2563,7 +2614,7 @@ body { background: #FFFFFF; }
       <a href="#" onclick="showFamilyFromLanding();return false;">For Families</a>
     </div>
     <div class="lp-nav-actions">
-      <button class="lp-signin" onclick="showLoginFromLanding()">Sign in</button>
+      <button class="lp-signin" onclick="showSignInFromLanding()">Sign in</button>
       <button class="lp-cta" onclick="showLoginFromLanding()">Get started →</button>
     </div>
   </nav>
@@ -2609,7 +2660,7 @@ body { background: #FFFFFF; }
       <p class="lp-sub">Guided is a Socratic AI tutor that builds real understanding — not just answers — for students aged 8–18.</p>
       <div class="lp-hero-btns">
         <button class="lp-cta lp-cta-hero" onclick="showLoginFromLanding()">Get started free →</button>
-        <button class="lp-ghost" onclick="showLoginFromLanding()">Sign in</button>
+        <button class="lp-ghost" onclick="showSignInFromLanding()">Sign in</button>
       </div>
     </div>
 
@@ -2659,6 +2710,72 @@ body { background: #FFFFFF; }
         <input class="fi" id="setup-sb-key" type="password" placeholder="eyJ..." autocomplete="off" spellcheck="false"/>
       </div>
       <button class="btn-next" style="width:100%" onclick="saveSetup()">Save & Continue →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ╔══════════════════════════════════════════╗ -->
+<!-- ║            SIGN IN SCREEN               ║ -->
+<!-- ╚══════════════════════════════════════════╝ -->
+<div id="signin-screen" style="display:none;position:fixed;inset:0;z-index:450;align-items:center;justify-content:center;padding:24px;overflow-y:auto">
+  <div class="ob-container" style="width:100%;max-width:420px">
+
+    <div class="ob-brand" style="text-align:center;margin-bottom:28px;animation:fadeUp .5s cubic-bezier(.16,1,.3,1) both">
+      <div class="ob-brand-mark" style="display:inline-flex;align-items:center;justify-content:center;margin-bottom:18px">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/>
+          <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+        </svg>
+      </div>
+      <span class="ob-wordmark" style="display:block">Guided</span>
+      <span class="ob-tagline" style="display:block">Welcome back</span>
+    </div>
+
+    <div class="ob-card" style="padding:0;overflow:hidden;animation:fadeUp .5s .06s cubic-bezier(.16,1,.3,1) both">
+
+      <!-- Tabs -->
+      <div class="si-tab-row">
+        <div class="si-tab active" id="si-tab-personal" onclick="siTab('personal')">Personal / Family</div>
+        <div class="si-tab" id="si-tab-school" onclick="siTab('school')">School Student</div>
+      </div>
+
+      <!-- Personal panel (email + password) -->
+      <div id="si-personal-panel" style="padding:28px 32px;display:flex;flex-direction:column;gap:16px">
+        <div class="fgroup">
+          <label style="font-size:10.5px;font-weight:700;letter-spacing:1.6px;text-transform:uppercase;color:var(--ink4)">Email</label>
+          <input class="fi" id="si-email" type="email" placeholder="you@example.com" autocomplete="email"/>
+        </div>
+        <div class="fgroup">
+          <label style="font-size:10.5px;font-weight:700;letter-spacing:1.6px;text-transform:uppercase;color:var(--ink4)">Password</label>
+          <input class="fi" id="si-pw" type="password" placeholder="Your password" autocomplete="current-password" onkeydown="if(event.key==='Enter')unifiedSignIn()"/>
+        </div>
+        <div id="si-error" style="display:none;color:var(--red);font-size:13px;text-align:center"></div>
+        <button class="btn-next" style="width:100%;margin-top:4px" onclick="unifiedSignIn()">Sign In →</button>
+        <div style="text-align:center;font-size:12px;color:var(--ink4)">No account yet? <a href="#" onclick="showLoginFromLanding();document.getElementById('signin-screen').style.display='none';return false;" style="color:var(--forest);font-weight:600">Get started free →</a></div>
+      </div>
+
+      <!-- School panel (school code + name + PIN) -->
+      <div id="si-school-panel" style="padding:28px 32px;display:none;flex-direction:column;gap:16px">
+        <div class="fgroup">
+          <label style="font-size:10.5px;font-weight:700;letter-spacing:1.6px;text-transform:uppercase;color:var(--ink4)">School Code</label>
+          <input class="fi" id="si-sch-code" placeholder="e.g. SCHOOL01" style="text-transform:uppercase;letter-spacing:2px"/>
+        </div>
+        <div class="fgroup">
+          <label style="font-size:10.5px;font-weight:700;letter-spacing:1.6px;text-transform:uppercase;color:var(--ink4)">Your Name</label>
+          <input class="fi" id="si-sch-name" placeholder="First and Last Name"/>
+        </div>
+        <div class="fgroup">
+          <label style="font-size:10.5px;font-weight:700;letter-spacing:1.6px;text-transform:uppercase;color:var(--ink4)">PIN</label>
+          <input class="fi" id="si-sch-pin" type="password" placeholder="4-digit PIN" onkeydown="if(event.key==='Enter')unifiedSignInSchool()"/>
+        </div>
+        <div id="si-sch-error" style="display:none;color:var(--red);font-size:13px;text-align:center"></div>
+        <button class="btn-next" style="width:100%;margin-top:4px" onclick="unifiedSignInSchool()">Sign In →</button>
+        <div style="text-align:center;font-size:12px;color:var(--ink4)">Don't have an account? Ask your teacher.</div>
+      </div>
+    </div>
+
+    <div style="text-align:center;margin-top:16px">
+      <button onclick="document.getElementById('signin-screen').style.display='none';document.getElementById('landing').style.display='flex'" style="background:none;border:none;color:var(--ink4);font-size:13px;cursor:pointer">← Back to home</button>
     </div>
   </div>
 </div>
@@ -3608,6 +3725,22 @@ body { background: #FFFFFF; }
 <!-- ╔══════════════════════════════════════════╗ -->
 <!-- ║                 APP                     ║ -->
 <!-- ╚══════════════════════════════════════════╝ -->
+<!-- Save Account Banner -->
+<div id="save-account-banner">
+  <div class="sab-title">💾 Save your progress</div>
+  <div class="sab-sub">Create a free account — your chat history and profile will be saved automatically.</div>
+  <div class="sab-row">
+    <input class="fi" id="sab-email" type="email" placeholder="Email address" autocomplete="email"/>
+  </div>
+  <div class="sab-row">
+    <input class="fi" id="sab-pw" type="password" placeholder="Choose a password" autocomplete="new-password"/>
+  </div>
+  <div class="sab-btns">
+    <button class="sab-save" onclick="saveAccountFromBanner()">Create account</button>
+    <button class="sab-skip" onclick="document.getElementById('save-account-banner').style.display='none'">Maybe later</button>
+  </div>
+</div>
+
 <div id="app">
 
   <div class="topnav">
@@ -4321,6 +4454,12 @@ function launchParentDashboard() {
   };
   document.getElementById('ob').style.display = 'none';
   showParentDashboard();
+  // Prompt to save family account
+  if (!S.accountId) setTimeout(() => {
+    S.userType = 'family';
+    S.name = parentName;
+    document.getElementById('save-account-banner').style.display = 'block';
+  }, 2000);
 }
 
 function showParentDashboard() {
@@ -4544,6 +4683,8 @@ function launchStudent() {
   S.subjectLog   = [];
   document.getElementById('ob-student').style.display = 'none';
   startAppSession();
+  // Prompt to save account (unless already logged in)
+  if (!S.accountId) setTimeout(() => { document.getElementById('save-account-banner').style.display = 'block'; }, 3000);
 }
 
 // ── Shared app launch ──
@@ -4678,6 +4819,7 @@ async function sendMsg(isHint = false, isGotIt = false) {
 
     updateDev(usage, lat);
     updateDashBadge();
+    syncHistoryToSupabase();
 
   } catch(e) {
     removeTyping(tid);
@@ -5891,6 +6033,9 @@ function saveSetup() {
   } else if (window._pendingFamily) {
     window._pendingFamily = false;
     document.getElementById('ob').style.display = 'flex';
+  } else if (window._pendingSignin) {
+    window._pendingSignin = false;
+    document.getElementById('signin-screen').style.display = 'flex';
   } else {
     document.getElementById('login-screen').style.display = 'flex';
   }
@@ -5944,6 +6089,144 @@ function showFamilyFromLanding() {
   } else {
     document.getElementById('ob').style.display = 'flex';
   }
+}
+
+// ── Show signin screen from landing ──
+function showSignInFromLanding() {
+  document.getElementById('landing').style.display = 'none';
+  if (!localStorage.getItem('guided_claude_key')) {
+    window._pendingSignin = true;
+    document.getElementById('setup-screen').style.display = 'flex';
+  } else {
+    document.getElementById('signin-screen').style.display = 'flex';
+  }
+}
+
+// ── Signin screen tab switcher ──
+function siTab(tab) {
+  document.getElementById('si-tab-personal').classList.toggle('active', tab === 'personal');
+  document.getElementById('si-tab-school').classList.toggle('active', tab === 'school');
+  document.getElementById('si-personal-panel').style.display = tab === 'personal' ? 'flex' : 'none';
+  document.getElementById('si-school-panel').style.display  = tab === 'school'   ? 'flex' : 'none';
+}
+
+// ── Unified sign-in: personal/family via email+password ──
+async function unifiedSignIn() {
+  const email = document.getElementById('si-email').value.trim().toLowerCase();
+  const pw    = document.getElementById('si-pw').value;
+  const errEl = document.getElementById('si-error');
+  errEl.style.display = 'none';
+  if (!email || !pw) { errEl.textContent = 'Please enter your email and password.'; errEl.style.display = 'block'; return; }
+  if (!SB) { errEl.textContent = 'Backend not connected — check API keys.'; errEl.style.display = 'block'; return; }
+  const btn = document.querySelector('#si-personal-panel .btn-next');
+  btn.textContent = 'Signing in…'; btn.disabled = true;
+  try {
+    const hash = await sha256(pw);
+    const { data: account, error } = await SB.from('guided_accounts').select('*').eq('email', email).eq('password_hash', hash).single();
+    if (error || !account) { errEl.textContent = 'Incorrect email or password.'; errEl.style.display = 'block'; return; }
+    // Load profile into S
+    const profile = account.profile || {};
+    Object.assign(S, profile);
+    S.history     = account.history  || [];
+    S.events      = account.events   || [];
+    S.accountId   = account.id;
+    S.userType    = account.user_type || 'solo';
+    S.sessionStart= Date.now();
+    S.subjectLog  = S.subjectLog || [];
+    document.getElementById('signin-screen').style.display = 'none';
+    // Restore chat history bubbles if any
+    if (S.history.length) restoreHistoryBubbles();
+    startAppSession();
+  } catch(e) {
+    errEl.textContent = 'Error: ' + e.message;
+    errEl.style.display = 'block';
+  } finally {
+    btn.textContent = 'Sign In →'; btn.disabled = false;
+  }
+}
+
+// ── Unified sign-in: school student tab ──
+async function unifiedSignInSchool() {
+  const code = document.getElementById('si-sch-code').value.trim().toUpperCase();
+  const name = document.getElementById('si-sch-name').value.trim();
+  const pin  = document.getElementById('si-sch-pin').value.trim();
+  const errEl = document.getElementById('si-sch-error');
+  errEl.style.display = 'none';
+  if (!code || !name || !pin) { errEl.textContent = 'Please fill in all fields.'; errEl.style.display = 'block'; return; }
+  if (!SB) { errEl.textContent = 'Backend not connected — check API keys.'; errEl.style.display = 'block'; return; }
+  const btn = document.querySelector('#si-school-panel .btn-next');
+  btn.textContent = 'Signing in…'; btn.disabled = true;
+  try {
+    const { data: school } = await SB.from('schools').select('id,name').eq('code', code).single();
+    if (!school) { errEl.textContent = 'School code not found.'; errEl.style.display = 'block'; return; }
+    const { data: students } = await SB.from('students').select('*').eq('school_id', school.id);
+    const student = students?.find(s => s.name.toLowerCase() === name.toLowerCase() && s.pin_hash === pin);
+    if (!student) { errEl.textContent = 'Incorrect name or PIN.'; errEl.style.display = 'block'; return; }
+    document.getElementById('signin-screen').style.display = 'none';
+    launchAsSchoolStudent({ ...student, schoolName: school.name });
+  } catch(e) {
+    errEl.textContent = 'Error: ' + e.message;
+    errEl.style.display = 'block';
+  } finally {
+    btn.textContent = 'Sign In →'; btn.disabled = false;
+  }
+}
+
+// ── Save account from banner ──
+async function saveAccountFromBanner() {
+  const email = document.getElementById('sab-email').value.trim().toLowerCase();
+  const pw    = document.getElementById('sab-pw').value;
+  if (!email || !pw) { toast('Enter email and password', 'err'); return; }
+  if (pw.length < 6) { toast('Password must be at least 6 characters', 'err'); return; }
+  if (!SB) { toast('Backend not connected — add Supabase keys in setup', 'err'); return; }
+  const btn = document.querySelector('.sab-save');
+  btn.textContent = 'Saving…'; btn.disabled = true;
+  try {
+    const hash = await sha256(pw);
+    const profile = {
+      name: S.name, age: S.age, subj: S.subj, style: S.style, goal: S.goal,
+      learningGoal: S.learningGoal, notes: S.notes, school: S.school,
+      bundesland: S.bundesland||'', lk: S.lk||[], gk: S.gk||[], abitur: S.abitur||false
+    };
+    const { data, error } = await SB.from('guided_accounts').insert({
+      email, password_hash: hash, user_type: S.userType || 'solo',
+      profile, history: S.history || [], events: S.events || []
+    }).select().single();
+    if (error) {
+      if (error.code === '23505') { toast('Email already registered — please sign in', 'err'); }
+      else { toast('Error: ' + error.message, 'err'); }
+      return;
+    }
+    S.accountId = data.id;
+    document.getElementById('save-account-banner').style.display = 'none';
+    toast('Account created! Progress will be saved automatically ✓', 'ok');
+  } catch(e) {
+    toast('Error: ' + e.message, 'err');
+  } finally {
+    btn.textContent = 'Create account'; btn.disabled = false;
+  }
+}
+
+// ── Sync history to Supabase after each exchange ──
+async function syncHistoryToSupabase() {
+  if (!S.accountId || !SB) return;
+  try {
+    await SB.from('guided_accounts').update({
+      history: S.history, events: S.events, updated_at: new Date().toISOString()
+    }).eq('id', S.accountId);
+  } catch(e) { console.warn('History sync:', e); }
+}
+
+// ── Restore previous history bubbles on login ──
+function restoreHistoryBubbles() {
+  const chatEl = document.getElementById('chat');
+  const empty  = document.getElementById('empty-chat');
+  if (empty) empty.remove();
+  // S.history contains {role, content} — render previous exchanges
+  S.history.forEach(msg => {
+    if (msg.role === 'user') addBubble('user', msg.content);
+    else if (msg.role === 'assistant') addBubble('ai', msg.content);
+  });
 }
 
 // ── On page load: always show landing page first ───
