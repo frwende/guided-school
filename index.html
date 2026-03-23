@@ -2659,7 +2659,7 @@ body { background: #FFFFFF; }
     <!-- Hero copy -->
     <div class="lp-hero-copy">
       <div class="lp-eyebrow">AI-Powered Tutoring</div>
-      <h1 class="lp-h1">Learn smarter,<br><span class="lp-h1-muted">not harder</span></h1>
+      <h1 class="lp-h1">Real understanding,<br><span class="lp-h1-muted">not just answers</span></h1>
       <p class="lp-sub">Guided is a Socratic AI tutor that builds real understanding — not just answers — for students aged 8–18.</p>
       <div class="lp-hero-btns">
         <button class="lp-cta lp-cta-hero" onclick="showLoginFromLanding()">Get started free →</button>
@@ -2713,6 +2713,9 @@ body { background: #FFFFFF; }
         <input class="fi" id="setup-sb-key" type="password" placeholder="eyJ..." autocomplete="off" spellcheck="false"/>
       </div>
       <button class="btn-next" style="width:100%" onclick="saveSetup()">Save & Continue →</button>
+    </div>
+    <div style="text-align:center;margin-top:16px">
+      <button onclick="document.getElementById('setup-screen').style.display='none';document.getElementById('landing').style.display='flex'" style="background:none;border:none;color:var(--ink4);font-size:13px;cursor:pointer">← Back to home</button>
     </div>
   </div>
 </div>
@@ -2811,7 +2814,8 @@ body { background: #FFFFFF; }
         <div class="login-type-desc">Using Guided for yourself? Build your own personal AI tutor in minutes</div>
       </div>
     </div>
-    <div style="text-align:center;margin-top:20px">
+    <div style="text-align:center;margin-top:20px;display:flex;flex-direction:column;gap:8px;align-items:center">
+      <button onclick="document.getElementById('login-screen').style.display='none';document.getElementById('landing').style.display='flex'" style="background:none;border:none;color:var(--ink4);font-size:13px;cursor:pointer">← Back to home</button>
       <button onclick="showSetupScreen()" style="background:none;border:none;color:var(--ink5);font-size:12px;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif">⚙ Change API keys</button>
     </div>
   </div>
@@ -3015,6 +3019,9 @@ body { background: #FFFFFF; }
             <div class="path-choice-name">I'm a Child</div>
             <div class="path-choice-desc">Log in and personalise your own learning experience</div>
           </div>
+        </div>
+        <div style="text-align:center;margin-top:20px">
+          <button onclick="document.getElementById('ob').style.display='none';document.getElementById('landing').style.display='flex'" style="background:none;border:none;color:var(--ink4);font-size:13px;cursor:pointer">← Back to home</button>
         </div>
       </div>
     </div>
@@ -3367,33 +3374,33 @@ body { background: #FFFFFF; }
           <div class="abitur-toggle-row" id="abitur-toggle-row" onclick="toggleAbiturPanel()">
             <div>
               <div class="abitur-toggle-label">🎓 Preparing for Abitur?</div>
-              <div class="abitur-toggle-sub">Germany — loads official Prüfungsschwerpunkte via Needle</div>
+              <div class="abitur-toggle-sub">Germany — loads official exam focus topics via Needle</div>
             </div>
             <div class="abitur-pill-switch"></div>
           </div>
           <div class="abitur-setup-panel" id="abitur-setup-panel">
             <div class="fgroup" style="margin:0">
-              <label>Bundesland</label>
+              <label>State (Bundesland)</label>
               <select class="fi" id="obs-bundesland">
-                <option value="">Select your Bundesland...</option>
-                <option value="Bayern">Bayern</option>
-                <option value="NRW">Nordrhein-Westfalen (NRW)</option>
+                <option value="">Select your state...</option>
+                <option value="Bayern">Bavaria (Bayern)</option>
+                <option value="NRW">North Rhine-Westphalia (NRW)</option>
                 <option value="BW">Baden-Württemberg</option>
                 <option value="Berlin">Berlin</option>
                 <option value="Hamburg">Hamburg</option>
-                <option value="Other">Anderes Bundesland</option>
+                <option value="Other">Other state</option>
               </select>
             </div>
             <div class="fgroup" style="margin:0">
-              <label>Leistungskurse (LK) <span style="color:var(--ink4);font-weight:400">max. 2</span></label>
+              <label>Advanced Courses (LK) <span style="color:var(--ink4);font-weight:400">max. 2</span></label>
               <div class="abitur-lk-row">
-                <input class="fi" id="obs-lk1" placeholder="z.B. Mathematik"/>
-                <input class="fi" id="obs-lk2" placeholder="z.B. Physik"/>
+                <input class="fi" id="obs-lk1" placeholder="e.g. Maths"/>
+                <input class="fi" id="obs-lk2" placeholder="e.g. Physics"/>
               </div>
             </div>
             <div class="fgroup" style="margin:0">
-              <label>Grundkurse (GK) <span style="color:var(--ink4);font-weight:400">optional, kommagetrennt</span></label>
-              <input class="fi" id="obs-gk" placeholder="z.B. Deutsch, Geschichte, Englisch, Biologie..."/>
+              <label>Core Courses (GK) <span style="color:var(--ink4);font-weight:400">optional, comma-separated</span></label>
+              <input class="fi" id="obs-gk" placeholder="e.g. German, History, English, Biology..."/>
             </div>
           </div>
         </div>
@@ -3534,7 +3541,7 @@ body { background: #FFFFFF; }
           <div style="font-size:10px;color:var(--ink4);margin-top:2px">Share this with your child</div>
         </div>
         <button class="btn-add-child" onclick="toggleAddChildPanel()">+ Add Child</button>
-        <button class="btn-logout-parent" onclick="showLoginScreen()">Log out</button>
+        <button class="btn-logout-parent" onclick="document.getElementById('parent-dashboard').style.display='none';document.getElementById('landing').style.display='flex'">← Home</button>
       </div>
     </div>
 
@@ -3747,7 +3754,8 @@ body { background: #FFFFFF; }
 <div id="app">
 
   <div class="topnav">
-    <div class="nav-logo">
+    <div class="nav-logo" style="display:flex;align-items:center;gap:10px">
+      <button onclick="goHome()" style="background:none;border:none;color:var(--ink4);font-size:13px;cursor:pointer;padding:4px 6px;border-radius:8px;transition:background .15s;line-height:1" title="Back to home">←</button>
       <div class="nav-logo-dot"></div>
       Guided
     </div>
@@ -4166,7 +4174,7 @@ ${S.lk.length ? `Leistungskurse (LK — exam-relevant, high depth): ${S.lk.join(
 ${S.gk.length ? `Grundkurse (GK): ${S.gk.join(', ')}` : ''}
 ${S.currentSubject ? `Currently active subject: ${S.currentSubject}` : ''}
 Prüfungsschwerpunkte have been loaded into Needle — use them to ask specific, exam-level questions.
-When the topic matches an LK: go deeper, use Abitur-style analysis questions, push for Bewertung/Evaluation level.` : '';
+When the topic matches an LK: go deeper, use Abitur-style analysis questions, push for Evaluation level.` : '';
 
   return `You are Guided, a world-class personal AI tutor for ${S.name}, aged ${S.age}, studying ${S.subj}.
 ${S.school ? `School: ${S.school}` : ''}
@@ -4720,7 +4728,7 @@ function startAppSession() {
   buildStarters();
   if (S.abitur && S.bundesland && S.bundesland !== 'Other') {
     const lkLabel = S.lk.length ? S.lk.join(' & ') : S.bundesland;
-    toast(`Lade Abitur-Prüfungsschwerpunkte: ${lkLabel} (${S.bundesland})...`, 'ok');
+    toast(`Loading Abitur exam topics: ${lkLabel} (${S.bundesland})...`, 'ok');
     autoLoadAbitur();
   } else {
     const curriculumUrl = S.schoolCurriculum || SUBJECT_URLS[S.subj];
@@ -5076,7 +5084,7 @@ async function autoLoadAbitur() {
     }
     S.ndReady = true;
     const lkLabel = S.lk.length ? S.lk.join(' + ') : S.bundesland;
-    toast(`Abitur ${S.bundesland}: ${loaded} Quellen geladen (${lkLabel}) ✓`, 'ok');
+    toast(`Abitur ${S.bundesland}: ${loaded} sources loaded (${lkLabel}) ✓`, 'ok');
   } catch(e) {
     console.error('autoLoadAbitur:', e);
   }
@@ -6121,6 +6129,28 @@ function showFamilyFromLanding() {
 }
 
 // ── Show signin screen from landing ──
+function goHome() {
+  // Hide all screens, go back to landing
+  ['app','parent-dashboard','admin-screen','school-screen','signin-screen','login-screen','ob','ob-student','setup-screen'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) { el.style.display = 'none'; el.classList.remove('show'); }
+  });
+  document.getElementById('save-account-banner').style.display = 'none';
+  document.getElementById('landing').style.display = 'flex';
+  // Clear session state
+  S.history = []; S.events = []; S.loading = false;
+  S.calls = 0; S.exchanges = 0; S.ahas = 0;
+  S.hintsLeft = 3; S.hintsUsed = 0;
+  S.totTok = 0; S.pTok = 0; S.cTok = 0;
+  S.ndReady = false; S.ndCollId = null; S.ndSearches = 0;
+  S.bloom = { remember:0, understand:0, apply:0, analyze:0, evaluate:0, create:0 };
+  S.bloomTotal = 0; S.name = ''; S.accountId = null;
+  // Clear chat
+  const msgs = document.getElementById('msgs');
+  if (msgs) msgs.innerHTML = '<div id="empty-chat" class="empty-chat"><div class="empty-icon">✦</div><div class="empty-title">Start a conversation</div><div class="empty-sub">Ask anything — your tutor is ready.</div></div>';
+  document.getElementById('sbtn').disabled = true;
+}
+
 function showSignInFromLanding() {
   document.getElementById('landing').style.display = 'none';
   if (!localStorage.getItem('guided_claude_key')) {
