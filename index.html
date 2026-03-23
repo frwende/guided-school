@@ -2542,7 +2542,7 @@ body { background: #FFFFFF; }
     </div>
     <div class="lp-nav-links">
       <a href="#">How it works</a>
-      <a href="#">For Schools</a>
+      <a href="#" onclick="showSchoolFromLanding();return false;">For Schools</a>
       <a href="#">For Families</a>
     </div>
     <div class="lp-nav-actions">
@@ -2668,11 +2668,6 @@ body { background: #FFFFFF; }
         <div class="login-type-name">Family</div>
         <div class="login-type-desc">Parents set up a personalised tutor for their child — with a full dashboard</div>
       </div>
-      <div class="login-type-card" onclick="chooseSchule()">
-        <div class="login-type-icon">🏫</div>
-        <div class="login-type-name">School</div>
-        <div class="login-type-desc">Schools manage student accounts and give each child their own access</div>
-      </div>
       <div class="login-type-card" onclick="chooseStudent()">
         <div class="login-type-icon">🎓</div>
         <div class="login-type-name">Student</div>
@@ -2772,8 +2767,8 @@ body { background: #FFFFFF; }
     </div>
 
     <div style="text-align:center;margin-top:16px">
-      <button onclick="showLoginScreen()" style="background:none;border:none;color:var(--ink4);font-size:13px;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif">
-        ← Back to selection
+      <button onclick="showLandingFromSchool()" style="background:none;border:none;color:var(--ink4);font-size:13px;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif">
+        ← Back to home
       </button>
     </div>
   </div>
@@ -5862,7 +5857,12 @@ function saveSetup() {
   if (sk) { localStorage.setItem('guided_supabase_key', sk); SUPABASE_KEY = sk; }
   initSupabase();
   document.getElementById('setup-screen').style.display = 'none';
-  document.getElementById('login-screen').style.display = 'flex';
+  if (window._pendingSchool) {
+    window._pendingSchool = false;
+    document.getElementById('school-screen').style.display = 'flex';
+  } else {
+    document.getElementById('login-screen').style.display = 'flex';
+  }
   toast('Keys saved', 'ok');
 }
 
@@ -5885,6 +5885,24 @@ function showLoginFromLanding() {
   } else {
     document.getElementById('login-screen').style.display = 'flex';
   }
+}
+
+// ── For Schools path: landing → school screen directly ───
+function showSchoolFromLanding() {
+  document.getElementById('landing').style.display = 'none';
+  if (!localStorage.getItem('guided_claude_key')) {
+    // Need keys first, then go to school screen
+    document.getElementById('setup-screen').style.display = 'flex';
+    // After saving keys, go to school screen instead of login
+    window._pendingSchool = true;
+  } else {
+    document.getElementById('school-screen').style.display = 'flex';
+  }
+}
+
+function showLandingFromSchool() {
+  document.getElementById('school-screen').style.display = 'none';
+  document.getElementById('landing').style.display = 'flex';
 }
 
 // ── On page load: always show landing page first ───
