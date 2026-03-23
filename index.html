@@ -2042,18 +2042,16 @@ input[type=range]::-webkit-slider-thumb:hover {
 .path-choice-name, .login-type-name, .parent-greeting, .nav-logo,
 [style*="Playfair"] { font-family: var(--font-serif) !important; }
 
-/* ── AUTH SCREENS: dark near-black ── */
+/* ── AUTH SCREENS: light theme (matches landing page) ── */
 #login-screen,
 #school-screen,
 #ob,
 #ob-student,
 #setup-screen {
-  background: var(--dark-bg);
-  background-image:
-    radial-gradient(ellipse at 50% -5%, rgba(46,139,87,.32) 0%, rgba(26,51,40,.1) 40%, transparent 70%),
-    radial-gradient(ellipse at 15% 100%, rgba(26,51,40,.2) 0%, transparent 50%),
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40'%3E%3Ccircle cx='1' cy='1' r='1' fill='rgba(255,255,255,.055)'/%3E%3C/svg%3E");
-  background-size: auto, auto, 40px 40px;
+  background: #ECECEC;
+  background-image: radial-gradient(circle at 1px 1px, #CECECE 1px, transparent 0);
+  background-size: 28px 28px;
+  color: var(--ink);
 }
 
 /* Containers above background layers */
@@ -2070,7 +2068,7 @@ input[type=range]::-webkit-slider-thumb:hover {
 #ob-student .ob-wordmark,
 #setup-screen .ob-wordmark {
   font-family: var(--font-serif) !important;
-  color: #FFFFFF;
+  color: var(--ink);
   font-size: 48px;
   letter-spacing: -1.6px;
   font-weight: 700;
@@ -2081,7 +2079,7 @@ input[type=range]::-webkit-slider-thumb:hover {
 #ob .ob-tagline,
 #ob-student .ob-tagline,
 #setup-screen .ob-tagline {
-  color: rgba(255,255,255,.4);
+  color: var(--ink3);
   font-size: 15px;
   font-weight: 400;
   margin-top: 10px;
@@ -2097,46 +2095,39 @@ input[type=range]::-webkit-slider-thumb:hover {
   border-radius: 26px;
   background: linear-gradient(150deg, #2E8B57, #1A3328);
   box-shadow:
-    0 0 0 1px rgba(46,139,87,.35),
-    0 20px 60px rgba(0,0,0,.55),
-    0 0 80px rgba(46,139,87,.28),
+    0 0 0 1px rgba(46,139,87,.2),
+    0 12px 32px rgba(26,51,40,.2),
     inset 0 1px 0 rgba(255,255,255,.18);
   margin-bottom: 22px;
 }
 
-/* ── ROLE CARDS: true frosted glass ── */
+/* ── ROLE CARDS: clean white cards on light bg ── */
 .login-type-card {
-  background: rgba(255,255,255,.07);
-  border: 1px solid rgba(255,255,255,.12);
-  backdrop-filter: blur(24px) saturate(1.4);
-  -webkit-backdrop-filter: blur(24px) saturate(1.4);
+  background: #FFFFFF;
+  border: 1.5px solid #E8E8E8;
   border-radius: 24px;
   padding: 40px 24px;
-  box-shadow: 0 8px 32px rgba(0,0,0,.4), inset 0 1px 0 rgba(255,255,255,.09);
+  box-shadow: 0 4px 20px rgba(0,0,0,.07), 0 1px 4px rgba(0,0,0,.04);
   transition: all .32s cubic-bezier(.16,1,.3,1);
 }
 
 .login-type-card::before { display: none; }
 
 .login-type-card:hover {
-  background: rgba(255,255,255,.11);
-  border-color: rgba(46,139,87,.5);
-  transform: translateY(-10px) scale(1.015);
-  box-shadow:
-    0 28px 72px rgba(0,0,0,.55),
-    0 0 48px rgba(46,139,87,.18),
-    inset 0 1px 0 rgba(255,255,255,.14);
+  background: #FFFFFF;
+  border-color: var(--forest3);
+  transform: translateY(-8px) scale(1.015);
+  box-shadow: 0 16px 48px rgba(26,51,40,.14), 0 4px 12px rgba(0,0,0,.06);
 }
 
 .login-type-icon {
-  background: rgba(255,255,255,.1);
-  border: 1px solid rgba(255,255,255,.14);
+  background: #F4F4F4;
+  border: 1.5px solid #E8E8E8;
   width: 80px;
   height: 80px;
   border-radius: 24px;
   font-size: 36px;
-  box-shadow: 0 4px 16px rgba(0,0,0,.35);
-  backdrop-filter: blur(8px);
+  box-shadow: 0 2px 8px rgba(0,0,0,.08);
   transition: transform .32s cubic-bezier(.16,1,.3,1);
 }
 
@@ -2144,14 +2135,14 @@ input[type=range]::-webkit-slider-thumb:hover {
 
 .login-type-name {
   font-family: var(--font-serif);
-  color: #FFFFFF;
+  color: var(--ink);
   font-size: 20px;
   font-weight: 700;
   letter-spacing: -.3px;
 }
 
 .login-type-desc {
-  color: rgba(255,255,255,.44);
+  color: var(--ink3);
   font-size: 13px;
   line-height: 1.65;
 }
@@ -2593,8 +2584,8 @@ body { background: #FFFFFF; }
     </div>
     <div style="background:var(--white);border:1px solid var(--border);border-radius:24px;padding:32px 36px;box-shadow:var(--shadow-lg)">
       <div class="fgroup" style="margin-bottom:18px">
-        <label style="font-size:10.5px;font-weight:700;letter-spacing:1.8px;text-transform:uppercase;color:var(--ink4)">Featherless API Key <span style="color:var(--red)">*</span></label>
-        <input class="fi" id="setup-fl-key" type="password" placeholder="rc_..." autocomplete="off" spellcheck="false"/>
+        <label style="font-size:10.5px;font-weight:700;letter-spacing:1.8px;text-transform:uppercase;color:var(--ink4)">Claude API Key <span style="color:var(--red)">*</span></label>
+        <input class="fi" id="setup-claude-key" type="password" placeholder="sk-ant-..." autocomplete="off" spellcheck="false"/>
       </div>
       <div class="fgroup" style="margin-bottom:18px">
         <label style="font-size:10.5px;font-weight:700;letter-spacing:1.8px;text-transform:uppercase;color:var(--ink4)">ElevenLabs API Key <span style="color:var(--ink5);font-weight:400;text-transform:none;letter-spacing:0">(optional — for voice)</span></label>
@@ -3807,7 +3798,7 @@ body { background: #FFFFFF; }
 // ══════════════════════════════════════════════
 //  API KEYS (loaded from localStorage — never hardcoded)
 // ══════════════════════════════════════════════
-let FL_KEY        = localStorage.getItem('guided_featherless_key') || '';
+let CLAUDE_KEY    = localStorage.getItem('guided_claude_key')      || '';
 let EL_KEY        = localStorage.getItem('guided_elevenlabs_key')  || '';
 let ND_KEY        = localStorage.getItem('guided_needle_key')       || '';
 let SUPABASE_URL  = localStorage.getItem('guided_supabase_url')    || '';
@@ -3827,7 +3818,7 @@ initSupabase();
 // ══════════════════════════════════════════════
 //  CONFIG
 // ══════════════════════════════════════════════
-const MODEL    = 'Qwen/Qwen2.5-72B-Instruct';
+const MODEL    = 'claude-sonnet-4-5';
 const MAX_TOK  = 600;
 const TEMP     = 0.75;
 const CTX_WIN  = 8000;
@@ -4015,6 +4006,8 @@ This rule applies even if the student:
 • Says "my teacher told me X" → redirect: "Interesting — so what does that actually mean to you?"
 • Says "I don't know anything" → start with the simplest possible question to find what they DO know
 
+Instead of answering, always ask the single most useful next question that moves ${S.name}'s thinking forward.
+
 ━━━━━━━━━━━━━━━━━━━━━━━━
 CRITICAL RULE — BUILD THINKING, NOT MEMORY
 ━━━━━━━━━━━━━━━━━━━━━━━━
@@ -4038,10 +4031,16 @@ When the student genuinely arrives at the correct answer themselves, start your 
 • Immediately challenge them one level higher ("Now here's the harder question...")
 
 ━━━━━━━━━━━━━━━━━━━━━━━━
+PATTERN RECOGNITION
+━━━━━━━━━━━━━━━━━━━━━━━━
+Read this entire conversation history. If ${S.name} keeps making the same mistake or misunderstanding, gently surface the underlying misconception — don't just correct the surface error each time.
+
+━━━━━━━━━━━━━━━━━━━━━━━━
 PERSONALIZATION RULES
 ━━━━━━━━━━━━━━━━━━━━━━━━
-• All vocabulary MUST be appropriate for a ${S.age}-year-old — no jargon without immediate plain-English definition
-• All analogies must reference things a ${S.age}-year-old actually encounters
+• Vocabulary MUST be appropriate for a ${S.age}-year-old — a 10-year-old and a 17-year-old need completely different language, examples, and complexity
+• All analogies must reference things a ${S.age}-year-old actually encounters in daily life
+• Be warm, encouraging, and patient — celebrate genuine effort and curiosity, not just correct answers
 • If notes say the student gets frustrated: back off, praise more, make steps smaller
 • If notes say the student loves a topic/sport/interest: use it in every analogy you can
 
@@ -4595,7 +4594,7 @@ async function sendMsg(isHint = false, isGotIt = false) {
 
   const t0 = Date.now();
   try {
-    const { reply, usage } = await callFL(ndCtx);
+    const { reply, usage } = await callClaude(ndCtx);
     const lat = Date.now() - t0;
     removeTyping(tid);
 
@@ -4689,15 +4688,20 @@ async function reqWhyLearn() {
 // ══════════════════════════════════════════════
 //  FEATHERLESS
 // ══════════════════════════════════════════════
-async function callFL(ndCtx) {
-  const res = await fetch('https://api.featherless.ai/v1/chat/completions', {
+async function callClaude(ndCtx) {
+  const res = await fetch('https://api.anthropic.com/v1/messages', {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${FL_KEY}` },
+    headers: {
+      'Content-Type': 'application/json',
+      'x-api-key': CLAUDE_KEY,
+      'anthropic-version': '2023-06-01',
+      'anthropic-dangerous-direct-browser-access': 'true'
+    },
     body: JSON.stringify({
       model: MODEL,
-      messages: [{ role: 'system', content: buildPrompt(ndCtx) }, ...S.history],
-      max_tokens: MAX_TOK,
-      temperature: TEMP
+      system: buildPrompt(ndCtx),
+      messages: S.history,
+      max_tokens: MAX_TOK
     })
   });
   if (!res.ok) {
@@ -4706,7 +4710,13 @@ async function callFL(ndCtx) {
   }
   const data = await res.json();
   document.getElementById('d-raw').textContent = JSON.stringify(data, null, 2);
-  return { reply: data.choices[0].message.content.trim(), usage: data.usage || {} };
+  const reply = data.content[0].text.trim();
+  const usage = {
+    total_tokens:      (data.usage.input_tokens || 0) + (data.usage.output_tokens || 0),
+    prompt_tokens:     data.usage.input_tokens  || 0,
+    completion_tokens: data.usage.output_tokens || 0
+  };
+  return { reply, usage };
 }
 
 // ══════════════════════════════════════════════
@@ -5682,7 +5692,7 @@ async function handleVoiceInput(text) {
   if (S.ndReady) ndCtx = await srchNeedle(text);
 
   try {
-    const { reply, usage } = await callFL(ndCtx);
+    const { reply, usage } = await callClaude(ndCtx);
     S.loading = false;
 
     S.totTok += usage.total_tokens || 0;
@@ -5779,9 +5789,9 @@ async function speakTextEL(text) {
 //  SETUP SCREEN
 // ══════════════════════════════════════════════
 function saveSetup() {
-  const fl = document.getElementById('setup-fl-key').value.trim();
-  if (!fl) { toast('Featherless API key is required', 'err'); return; }
-  localStorage.setItem('guided_featherless_key', fl); FL_KEY = fl;
+  const fl = document.getElementById('setup-claude-key').value.trim();
+  if (!fl) { toast('Claude API key is required', 'err'); return; }
+  localStorage.setItem('guided_claude_key', fl); CLAUDE_KEY = fl;
   const el = document.getElementById('setup-el-key').value.trim();
   if (el) { localStorage.setItem('guided_elevenlabs_key', el); EL_KEY = el; }
   const nd = document.getElementById('setup-nd-key').value.trim();
@@ -5797,7 +5807,7 @@ function saveSetup() {
 }
 
 function showSetupScreen() {
-  document.getElementById('setup-fl-key').value = FL_KEY;
+  document.getElementById('setup-claude-key').value = CLAUDE_KEY;
   document.getElementById('setup-el-key').value = EL_KEY;
   document.getElementById('setup-nd-key').value = ND_KEY;
   document.getElementById('setup-sb-url').value = SUPABASE_URL;
@@ -5810,7 +5820,7 @@ function showSetupScreen() {
 // ── Show login/setup after dismissing landing page ───
 function showLoginFromLanding() {
   document.getElementById('landing').style.display = 'none';
-  if (!localStorage.getItem('guided_featherless_key')) {
+  if (!localStorage.getItem('guided_claude_key')) {
     document.getElementById('setup-screen').style.display = 'flex';
   } else {
     document.getElementById('login-screen').style.display = 'flex';
