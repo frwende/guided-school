@@ -934,6 +934,20 @@ input[type=range]::-webkit-slider-thumb:hover {
 }
 .btn-gotit:hover { background: #D4F5E5; }
 
+.btn-whylearn {
+  background: #EEF2FF;
+  border: 1.5px solid rgba(99,102,241,.25);
+  color: #4F46E5;
+  border-radius: 20px;
+  padding: 7px 16px;
+  font-size: 13px;
+  font-weight: 600;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  cursor: pointer;
+  transition: all .15s;
+}
+.btn-whylearn:hover { background: #E0E7FF; }
+
 /* Input area */
 .input-area {
   padding: 16px 24px 22px;
@@ -3512,6 +3526,7 @@ body { background: #FFFFFF; }
           💡 Need a hint
           <span class="hint-count" id="hcount">3</span>
         </button>
+        <button class="btn-whylearn" onclick="reqWhyLearn()" title="Why am I learning this?">🌍 Why do I need this?</button>
         <button class="btn-gotit" onclick="gotIt()">✓ I figured it out!</button>
       </div>
 
@@ -4452,6 +4467,39 @@ function reqHint() {
 }
 
 function gotIt() { sendMsg(false, true); }
+
+async function reqWhyLearn() {
+  if (S.loading) return;
+  const interests = S.notes ? S.notes : '';
+  const interestLine = interests ? ` The student's interests and background: ${interests}.` : '';
+  const prompt = `(The student is asking: "Why do I need to learn this in real life? How is what we're discussing right now actually useful outside of school?")${interestLine} Give a short, genuine, and inspiring answer that connects the current topic directly to real-life situations — ideally using examples that relate to their personal interests. Keep it under 5 sentences and make it feel exciting, not like a textbook.`;
+  S.events.push({ who: 'student', text: '(asked why they need to learn this)', type: 'message', ts: Date.now() });
+  addBubble('user', '🌍 Why do I need to learn this?');
+  S.history.push({ role: 'user', content: prompt });
+  S.loading = true;
+  document.getElementById('sbtn').disabled = true;
+  const tid = showTyping();
+  let ndCtx = '';
+  if (S.ndReady) ndCtx = await srchNeedle('real life application');
+  const t0 = Date.now();
+  try {
+    const { reply, usage } = await callFL(ndCtx);
+    const lat = Date.now() - t0;
+    removeTyping(tid);
+    const clean = reply.replace(/^\[AHA\]\s*/, '').replace(/\[BLOOM:\w+\]/gi, '').trim();
+    const { txt } = parseImg(clean);
+    addBubble('ai', txt, usage, false, false, 'understand');
+    S.history.push({ role: 'assistant', content: clean });
+    updateDev(usage, lat);
+  } catch(e) {
+    removeTyping(tid);
+    addBubble('ai', '⚠️ Error: ' + e.message);
+    S.history.pop();
+  }
+  S.loading = false;
+  document.getElementById('sbtn').disabled = false;
+  document.getElementById('minput').focus();
+}
 
 // ══════════════════════════════════════════════
 //  FEATHERLESS
