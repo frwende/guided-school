@@ -4575,6 +4575,7 @@ const S = {
   history: [],
   events: [],         // {who, text, type, bloom, ts}
   totTok:0, pTok:0, cTok:0, cacheCreate:0, cacheRead:0,
+  learningProfile: '', aiNotes: '',
   calls:0, imgs:0, ndSearches:0,
   hintsLeft:3, hintsUsed:0, exchanges:0, ahas:0,
   sessionStart: null,
@@ -4727,6 +4728,8 @@ ${S.school ? `School: ${S.school}` : ''}
 ${S.goal ? `Session goal: ${S.goal}` : ''}
 ${S.notes ? `IMPORTANT about this student: ${S.notes}` : ''}
 ${abiturContext}
+${S.learningProfile ? `\n${S.learningProfile}` : ''}
+${S.aiNotes ? `\n━━━━━━━━━━━━━━━━━━━━━━━━\nTUTOR HANDOVER NOTES\n━━━━━━━━━━━━━━━━━━━━━━━━\n${S.aiNotes}` : ''}
 
 ━━━━━━━━━━━━━━━━━━━━━━━━
 CRITICAL RULE — NEVER GIVE A DIRECT ANSWER
@@ -6678,6 +6681,10 @@ async function launchAsSchoolStudent(student) {
 
   try { S.lessonContext = await fetchTodaysLessonContext(); } catch(e) { S.lessonContext = ''; }
 
+  // Load learning profile from past sessions + handover notes
+  S.aiNotes = student.ai_notes || '';
+  await loadLearningProfile(S.studentId);
+
   document.getElementById('app').style.display = 'flex';
   document.getElementById('app').classList.add('show');
 
@@ -7307,6 +7314,119 @@ function toast(msg, type = '') {
 }
 
 // ══════════════════════════════════════════════
+//  LEARNING PROFILE LOADER
+// ══════════════════════════════════════════════
+async function loadLearningProfile(studentId) {
+  if (!SB || !studentId) return;
+  try {
+    const { data: sessions } = await SB
+      .from('sessions')
+      .select('subject, style, independence_score, aha_count, hints_used, bloom_data, started_at')
+      .eq('student_id', studentId)
+      .order('started_at', { ascending: false })
+      .limit(10);
+
+    if (!sessions?.length) return;
+
+    const total = sessions.length;
+    const bloomLevels = ['remember','understand','apply','analyze','evaluate','create'];
+
+    // Per-subject aggregates
+    const bySubject = {};
+    sessions.forEach(s => {
+      const subj = (s.subject || 'General').split('/')[0].trim();
+      if (!bySubject[subj]) bySubject[subj] = { scores: [], ahas: 0, hints: 0 };
+      bySubject[subj].scores.push(s.independence_score || 0);
+      bySubject[subj].ahas  += s.aha_count  || 0;
+      bySubject[subj].hints += s.hints_used || 0;
+    });
+    const subjRanked = Object.entries(bySubject)
+      .map(([subj, d]) => ({ subj, avg: Math.round(d.scores.reduce((a,b)=>a+b,0)/d.scores.length), ahas: d.ahas, hints: d.hints }))
+      .sort((a,b) => b.avg - a.avg);
+    const strong = subjRanked.filter(s => s.avg >= 70).map(s => s.subj).slice(0, 3);
+    const weak   = subjRanked.filter(s => s.avg < 55 || s.hints > 4).map(s => s.subj).slice(0, 3);
+
+    // Bloom trend (recent 3 vs older sessions)
+    const bloomIdx = arr => {
+      const flat = arr.flatMap(s => s.bloom_data ? Object.entries(s.bloom_data).flatMap(([k,v]) => Array(Math.max(0,v)).fill(k)) : []);
+      return flat.length ? flat.reduce((a,b) => a + (bloomLevels.indexOf(b) || 0), 0) / flat.length : 1;
+    };
+    const recentIdx = bloomIdx(sessions.slice(0, 3));
+    const olderIdx  = bloomIdx(sessions.slice(-3));
+    const bloomTrend = recentIdx > olderIdx + 0.4 ? 'improving' : recentIdx < olderIdx - 0.4 ? 'declining' : 'stable';
+    const dominantLevel = bloomLevels[Math.round(recentIdx)] || 'understand';
+
+    // Best teaching style
+    const byStyle = {};
+    sessions.forEach(s => {
+      if (!s.style) return;
+      if (!byStyle[s.style]) byStyle[s.style] = { scores: [], ahas: 0 };
+      byStyle[s.style].scores.push(s.independence_score || 0);
+      byStyle[s.style].ahas += s.aha_count || 0;
+    });
+    const styleNames = { socratic:'Socratic', stepbystep:'Step-by-Step', friendly:'Warm & Patient', challenge:'Challenge Mode' };
+    const bestStyle = Object.entries(byStyle)
+      .map(([st, d]) => ({ st, score: Math.round(d.scores.reduce((a,b)=>a+b,0)/d.scores.length) + d.ahas * 5 }))
+      .sort((a,b) => b.score - a.score)[0]?.st;
+
+    const avgScore = Math.round(sessions.reduce((a,s)=>a+(s.independence_score||0),0)/total);
+    const last = sessions[0];
+
+    let profile = `━━━━━━━━━━━━━━━━━━━━━━━━
+LEARNING HISTORY (${total} session${total>1?'s':''} on record)
+━━━━━━━━━━━━━━━━━━━━━━━━
+Average independence score: ${avgScore}/100
+${strong.length ? `Strongest areas: ${strong.join(', ')}` : ''}
+${weak.length   ? `Needs more support in: ${weak.join(', ')}` : ''}
+Bloom level: primarily ${dominantLevel} (${bloomTrend})
+${bestStyle ? `Most effective style for this student: ${styleNames[bestStyle]||bestStyle}` : ''}
+Last session: ${last.subject||'General'} — score ${last.independence_score||'?'}/100, ${last.aha_count||0} AHA moment(s)`;
+
+    S.learningProfile = profile.trim();
+  } catch(e) { console.error('loadLearningProfile failed:', e); }
+}
+
+// ══════════════════════════════════════════════
+//  SESSION NOTES GENERATOR (end-of-session handover)
+// ══════════════════════════════════════════════
+async function generateSessionNotes() {
+  if (!SB || !S.studentId || !CLAUDE_KEY || S.exchanges < 3) return;
+  try {
+    const transcript = S.history
+      .filter(m => typeof m.content === 'string')
+      .slice(-20)
+      .map(m => `${m.role === 'user' ? 'Student' : 'Tutor'}: ${m.content.slice(0, 200)}`)
+      .join('\n');
+
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': CLAUDE_KEY,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true'
+      },
+      body: JSON.stringify({
+        model: CLAUDE_MODEL,
+        system: 'You are writing a handover note for the next tutor session. In exactly 2-3 sentences, note: what approach worked, any misconceptions that appeared, and one specific thing to remember about this learner. Be concrete and actionable. No filler.',
+        messages: [{ role: 'user', content: `Tutoring session transcript:\n${transcript}` }],
+        max_tokens: 120
+      })
+    });
+    if (!res.ok) return;
+    const data = await res.json();
+    const note = data.content?.[0]?.text?.trim();
+    if (!note) return;
+
+    // Prepend new note, keep last ~600 chars total (roughly 3 sessions)
+    const dated = `[${new Date().toLocaleDateString('en-GB')}] ${note}`;
+    const combined = [dated, S.aiNotes].filter(Boolean).join('\n').slice(0, 600);
+    await SB.from('students').update({ ai_notes: combined }).eq('id', S.studentId);
+    S.aiNotes = combined;
+  } catch(e) { console.error('generateSessionNotes failed:', e); }
+}
+
+// ══════════════════════════════════════════════
 //  SESSION SAVING
 // ══════════════════════════════════════════════
 function computeScore() {
@@ -7349,6 +7469,8 @@ async function saveSession() {
       })));
     }
   } catch(e) { console.error('Session save failed:', e); }
+  // Fire-and-forget: generate AI handover notes for next session
+  generateSessionNotes();
 }
 
 // Alt+D opens the dev panel (hidden from UI)
