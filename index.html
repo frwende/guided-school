@@ -2645,6 +2645,15 @@ body { background: #FFFFFF; }
   font-family: inherit;
 }
 .chat-disclaimer-link:hover { color: var(--forest); }
+.chat-powered { font-weight: 600; color: var(--forest2); opacity: .75; }
+
+/* ── Powered by badge (landing) ── */
+.lp-powered {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 12px; color: var(--ink4); font-weight: 500;
+  letter-spacing: .2px; margin-top: 18px;
+}
+.lp-powered-dot { font-size: 11px; color: var(--forest2); opacity: .7; }
 
 /* ── Legal overlay ── */
 #legal-overlay {
@@ -2975,6 +2984,7 @@ body { background: #FFFFFF; }
         <button class="lp-cta lp-cta-hero" onclick="showLoginFromLanding()">Get started free →</button>
         <button class="lp-ghost" onclick="showSignInFromLanding()">Sign in</button>
       </div>
+      <div class="lp-powered"><span class="lp-powered-dot">✦</span> Powered by Claude &amp; Anthropic</div>
     </div>
 
   </div>
@@ -4352,7 +4362,7 @@ body { background: #FFFFFF; }
           </button>
         </div>
       </div>
-      <div class="chat-disclaimer">Guided can make mistakes. Always verify important answers. <button class="chat-disclaimer-link" onclick="openLegal()">Learn more</button></div>
+      <div class="chat-disclaimer"><span class="chat-powered">✦ Powered by Claude</span> · Guided can make mistakes. <button class="chat-disclaimer-link" onclick="openLegal()">Learn more</button></div>
     </div>
 
     <!-- DEV PANEL -->
