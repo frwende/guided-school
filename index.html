@@ -7306,7 +7306,7 @@ function restoreHistoryBubbles() {
   // S.history contains {role, content} — render previous exchanges
   S.history.forEach(msg => {
     if (msg.role === 'user') addBubble('user', msg.content);
-    else if (msg.role === 'assistant') addBubble('ai', msg.content);
+    else if (msg.role === 'assistant') addBubble('ai', msg.content.replace(/\[TUTOR_NOTE:[\s\S]*?\]/gi, '').trim());
   });
 }
 
