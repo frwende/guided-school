@@ -4576,6 +4576,7 @@ const S = {
   events: [],         // {who, text, type, bloom, ts}
   totTok:0, pTok:0, cTok:0, cacheCreate:0, cacheRead:0,
   learningProfile: '', aiNotes: '',
+  latestTutorNote: '', sessionNotes: [],
   calls:0, imgs:0, ndSearches:0,
   hintsLeft:3, hintsUsed:0, exchanges:0, ahas:0,
   sessionStart: null,
@@ -4803,7 +4804,8 @@ FORMAT
 ━━━━━━━━━━━━━━━━━━━━━━━━
 • Max 3 short paragraphs. Never overwhelm.
 • End EVERY response with a question or challenge.
-• Always include [BLOOM:level] tag at the very end.
+• Always include [BLOOM:level] tag.
+• After [BLOOM:level], append your private tutor note: [TUTOR_NOTE: 1-2 sentences on what you observed in this exchange — misconceptions spotted, what clicked, what approach worked or didn't. This is your private notebook, the student never sees it.]
 
 ${ndCtx ? `\n━━━━━━━━━━━━━━━━━━━━━━━━\nSTUDY MATERIAL (use this to ask specific, grounded questions):\n${ndCtx}\n━━━━━━━━━━━━━━━━━━━━━━━━` : ''}${S.lessonContext||''}`;
 }
@@ -5359,13 +5361,14 @@ async function sendMsg(isHint = false, isGotIt = false) {
 
     // Parse response
     const isAha   = reply.startsWith('[AHA]');
-    const clean   = reply.replace(/^\[AHA\]\s*/, '').replace(/\[BLOOM:\w+\]/gi, '').trim();
-    const bloomM  = reply.match(/\[BLOOM:(\w+)\]/i);
+    const withoutAha = reply.replace(/^\[AHA\]\s*/, '');
+    const bloomM  = withoutAha.match(/\[BLOOM:(\w+)\]/i);
     const bloomLvl = bloomM ? bloomM[1].toLowerCase() : 'understand';
-    const { txt, imgP, svgCode } = parseImg(clean);
+    const { forHistory, forDisplay } = parseTutorNote(withoutAha);
+    const { txt, imgP, svgCode } = parseImg(forDisplay);
 
     addBubble('ai', txt, usage, isHint, isAha, bloomLvl);
-    S.history.push({ role: 'assistant', content: clean });
+    S.history.push({ role: 'assistant', content: forHistory });
     S.events.push({ who: 'tutor', text: txt, type: isAha ? 'aha' : isHint ? 'hint' : 'message', bloom: bloomLvl, ts: Date.now() });
 
     if (isAha) { S.ahas++; document.getElementById('d-ahas').textContent = S.ahas; }
@@ -5425,10 +5428,10 @@ async function reqWhyLearn() {
     const { reply, usage } = await callLLM(ndCtx);
     const lat = Date.now() - t0;
     removeTyping(tid);
-    const clean = reply.replace(/^\[AHA\]\s*/, '').replace(/\[BLOOM:\w+\]/gi, '').trim();
-    const { txt } = parseImg(clean);
+    const { forHistory, forDisplay } = parseTutorNote(reply.replace(/^\[AHA\]\s*/, ''));
+    const { txt } = parseImg(forDisplay);
     addBubble('ai', txt, usage, false, false, 'understand');
-    S.history.push({ role: 'assistant', content: clean });
+    S.history.push({ role: 'assistant', content: forHistory });
     updateDev(usage, lat);
   } catch(e) {
     removeTyping(tid);
@@ -5513,6 +5516,20 @@ async function callLLM(ndCtx) {
 // ══════════════════════════════════════════════
 //  IMAGE GENERATION (free — Pollinations)
 // ══════════════════════════════════════════════
+// Extracts [TUTOR_NOTE: ...] from a reply.
+// Returns { note, forHistory (TUTOR_NOTE kept, BLOOM stripped), forDisplay (both stripped) }
+function parseTutorNote(raw) {
+  const noteMatch = raw.match(/\[TUTOR_NOTE:([\s\S]*?)\]/i);
+  const note = noteMatch ? noteMatch[1].trim() : '';
+  if (note) {
+    S.latestTutorNote = note;
+    S.sessionNotes.push(note);
+  }
+  const forHistory = raw.replace(/\[BLOOM:\w+\]/gi, '').trim();       // keep TUTOR_NOTE
+  const forDisplay = forHistory.replace(/\[TUTOR_NOTE:[\s\S]*?\]/gi, '').trim(); // strip it
+  return { note, forHistory, forDisplay };
+}
+
 function parseImg(t) {
   // SVG inline diagram
   const svgM = t.match(/\[SVG:\s*(<svg[\s\S]*?<\/svg>)\s*\]/i);
@@ -6951,13 +6968,14 @@ async function handleVoiceInput(text) {
     S.exchanges++;
 
     const isAha   = reply.startsWith('[AHA]');
-    const clean   = reply.replace(/^\[AHA\]\s*/, '').replace(/\[BLOOM:\w+\]/gi, '').trim();
-    const bloomM  = reply.match(/\[BLOOM:(\w+)\]/i);
+    const withoutAha = reply.replace(/^\[AHA\]\s*/, '');
+    const bloomM  = withoutAha.match(/\[BLOOM:(\w+)\]/i);
     const bloomLvl = bloomM ? bloomM[1].toLowerCase() : 'understand';
-    const { txt }  = parseImg(clean);
+    const { forHistory, forDisplay } = parseTutorNote(withoutAha);
+    const { txt }  = parseImg(forDisplay);
 
     addBubble('ai', txt, usage, false, isAha, bloomLvl);
-    S.history.push({ role:'assistant', content: clean });
+    S.history.push({ role:'assistant', content: forHistory });
     S.events.push({ who:'tutor', text:txt, type: isAha?'aha':'message', bloom:bloomLvl, ts:Date.now() });
 
     if (isAha) { S.ahas++; document.getElementById('d-ahas').textContent = S.ahas; }
@@ -7389,43 +7407,6 @@ Last session: ${last.subject||'General'} — score ${last.independence_score||'?
 // ══════════════════════════════════════════════
 //  SESSION NOTES GENERATOR (end-of-session handover)
 // ══════════════════════════════════════════════
-async function generateSessionNotes() {
-  if (!SB || !S.studentId || !CLAUDE_KEY || S.exchanges < 3) return;
-  try {
-    const transcript = S.history
-      .filter(m => typeof m.content === 'string')
-      .slice(-20)
-      .map(m => `${m.role === 'user' ? 'Student' : 'Tutor'}: ${m.content.slice(0, 200)}`)
-      .join('\n');
-
-    const res = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': CLAUDE_KEY,
-        'anthropic-version': '2023-06-01',
-        'anthropic-dangerous-direct-browser-access': 'true'
-      },
-      body: JSON.stringify({
-        model: CLAUDE_MODEL,
-        system: 'You are writing a handover note for the next tutor session. In exactly 2-3 sentences, note: what approach worked, any misconceptions that appeared, and one specific thing to remember about this learner. Be concrete and actionable. No filler.',
-        messages: [{ role: 'user', content: `Tutoring session transcript:\n${transcript}` }],
-        max_tokens: 120
-      })
-    });
-    if (!res.ok) return;
-    const data = await res.json();
-    const note = data.content?.[0]?.text?.trim();
-    if (!note) return;
-
-    // Prepend new note, keep last ~600 chars total (roughly 3 sessions)
-    const dated = `[${new Date().toLocaleDateString('en-GB')}] ${note}`;
-    const combined = [dated, S.aiNotes].filter(Boolean).join('\n').slice(0, 600);
-    await SB.from('students').update({ ai_notes: combined }).eq('id', S.studentId);
-    S.aiNotes = combined;
-  } catch(e) { console.error('generateSessionNotes failed:', e); }
-}
-
 // ══════════════════════════════════════════════
 //  SESSION SAVING
 // ══════════════════════════════════════════════
@@ -7469,8 +7450,13 @@ async function saveSession() {
       })));
     }
   } catch(e) { console.error('Session save failed:', e); }
-  // Fire-and-forget: generate AI handover notes for next session
-  generateSessionNotes();
+  // Save piggyback tutor notes (last 3 from this session) — zero extra API calls
+  if (SB && S.studentId && S.sessionNotes.length) {
+    const newNote = `[${new Date().toLocaleDateString('en-GB')}] ${S.sessionNotes.slice(-3).join(' | ')}`;
+    const combined = [newNote, S.aiNotes].filter(Boolean).join('\n').slice(0, 500);
+    SB.from('students').update({ ai_notes: combined }).eq('id', S.studentId);
+    S.aiNotes = combined;
+  }
 }
 
 // Alt+D opens the dev panel (hidden from UI)
