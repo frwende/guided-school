@@ -3011,10 +3011,6 @@ body { background: #FFFFFF; }
     </div>
     <div style="background:var(--white);border:1px solid var(--border);border-radius:24px;padding:32px 36px;box-shadow:var(--shadow-lg)">
       <div class="fgroup" style="margin-bottom:18px">
-        <label style="font-size:10.5px;font-weight:700;letter-spacing:1.8px;text-transform:uppercase;color:var(--ink4)">Claude API Key <span style="color:var(--red)">*</span></label>
-        <input class="fi" id="setup-claude-key" type="password" placeholder="sk-ant-..." autocomplete="off" spellcheck="false"/>
-      </div>
-      <div class="fgroup" style="margin-bottom:18px">
         <label style="font-size:10.5px;font-weight:700;letter-spacing:1.8px;text-transform:uppercase;color:var(--ink4)">ElevenLabs API Key <span style="color:var(--ink5);font-weight:400;text-transform:none;letter-spacing:0">(optional — for voice)</span></label>
         <input class="fi" id="setup-el-key" type="password" placeholder="bb0..." autocomplete="off" spellcheck="false"/>
       </div>
@@ -3025,11 +3021,11 @@ body { background: #FFFFFF; }
       <div style="height:1px;background:var(--border);margin:4px 0 18px"></div>
       <div style="font-size:10.5px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--gold);margin-bottom:14px">Database (Supabase)</div>
       <div class="fgroup" style="margin-bottom:18px">
-        <label style="font-size:10.5px;font-weight:700;letter-spacing:1.8px;text-transform:uppercase;color:var(--ink4)">Supabase Project URL <span style="color:var(--ink5);font-weight:400;text-transform:none;letter-spacing:0">(optional — for multi-device)</span></label>
+        <label style="font-size:10.5px;font-weight:700;letter-spacing:1.8px;text-transform:uppercase;color:var(--ink4)">Supabase Project URL <span style="color:var(--red)">*</span></label>
         <input class="fi" id="setup-sb-url" type="text" placeholder="https://xxxx.supabase.co" autocomplete="off" spellcheck="false"/>
       </div>
       <div class="fgroup" style="margin-bottom:24px">
-        <label style="font-size:10.5px;font-weight:700;letter-spacing:1.8px;text-transform:uppercase;color:var(--ink4)">Supabase Anon Key <span style="color:var(--ink5);font-weight:400;text-transform:none;letter-spacing:0">(optional)</span></label>
+        <label style="font-size:10.5px;font-weight:700;letter-spacing:1.8px;text-transform:uppercase;color:var(--ink4)">Supabase Anon Key <span style="color:var(--red)">*</span></label>
         <input class="fi" id="setup-sb-key" type="password" placeholder="eyJ..." autocomplete="off" spellcheck="false"/>
       </div>
       <div style="height:1px;background:var(--border);margin:4px 0 18px"></div>
@@ -4546,7 +4542,6 @@ marked.setOptions({ breaks: true, gfm: true });
 // ══════════════════════════════════════════════
 //  API KEYS (loaded from localStorage — never hardcoded)
 // ══════════════════════════════════════════════
-let CLAUDE_KEY    = localStorage.getItem('guided_claude_key')      || '';
 let EL_KEY        = localStorage.getItem('guided_elevenlabs_key')  || '';
 let ND_KEY        = localStorage.getItem('guided_needle_key')       || '';
 let SUPABASE_URL  = localStorage.getItem('guided_supabase_url')    || '';
@@ -5547,14 +5542,11 @@ async function reqWhyLearn() {
 //  CLAUDE API (with prompt caching)
 // ══════════════════════════════════════════════
 async function callClaude(ndCtx, model) {
-  const res = await fetch('https://api.anthropic.com/v1/messages', {
+  const res = await fetch(`${SUPABASE_URL}/functions/v1/ai-proxy`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'x-api-key': CLAUDE_KEY,
-      'anthropic-version': '2023-06-01',
-      'anthropic-beta': 'prompt-caching-2024-07-31',
-      'anthropic-dangerous-direct-browser-access': 'true'
+      'Authorization': 'Bearer ' + SUPABASE_KEY,
     },
     body: JSON.stringify({
       model: model || MODELS.sonnet,
@@ -5609,7 +5601,7 @@ function maybeCompressHistory() {
 // ══════════════════════════════════════════════
 async function callLLM(ndCtx, isHint = false) {
   maybeCompressHistory();
-  if (!CLAUDE_KEY) throw new Error('No Claude API key — open Settings to add one.');
+  if (!SUPABASE_URL || !SUPABASE_KEY) throw new Error('Supabase URL and Anon Key required — open Settings.');
 
   // Check daily limit
   const limit = checkDailyLimit();
@@ -7477,17 +7469,16 @@ async function speakTextEL(text) {
 //  SETUP SCREEN
 // ══════════════════════════════════════════════
 function saveSetup() {
-  const ck = document.getElementById('setup-claude-key').value.trim();
-  if (!ck) { toast('Claude API key is required', 'err'); return; }
-  localStorage.setItem('guided_claude_key', ck); CLAUDE_KEY = ck;
   const el = document.getElementById('setup-el-key').value.trim();
   if (el) { localStorage.setItem('guided_elevenlabs_key', el); EL_KEY = el; }
   const nd = document.getElementById('setup-nd-key').value.trim();
   if (nd) { localStorage.setItem('guided_needle_key', nd); ND_KEY = nd; }
   const su = document.getElementById('setup-sb-url').value.trim();
-  if (su) { localStorage.setItem('guided_supabase_url', su); SUPABASE_URL = su; }
+  if (!su) { toast('Supabase Project URL is required', 'err'); return; }
+  localStorage.setItem('guided_supabase_url', su); SUPABASE_URL = su;
   const sk = document.getElementById('setup-sb-key').value.trim();
-  if (sk) { localStorage.setItem('guided_supabase_key', sk); SUPABASE_KEY = sk; }
+  if (!sk) { toast('Supabase Anon Key is required', 'err'); return; }
+  localStorage.setItem('guided_supabase_key', sk); SUPABASE_KEY = sk;
   const slk = document.getElementById('setup-slack-token').value.trim();
   if (slk) { localStorage.setItem('guided_slack_token', slk); SLACK_TOKEN = slk; }
   initSupabase();
@@ -7508,7 +7499,6 @@ function saveSetup() {
 }
 
 function showSetupScreen() {
-  document.getElementById('setup-claude-key').value = CLAUDE_KEY;
   document.getElementById('setup-el-key').value = EL_KEY;
   document.getElementById('setup-nd-key').value = ND_KEY;
   document.getElementById('setup-sb-url').value = SUPABASE_URL;
@@ -7522,7 +7512,7 @@ function showSetupScreen() {
 // ── Show login/setup after dismissing landing page ───
 function showLoginFromLanding() {
   document.getElementById('landing').style.display = 'none';
-  if (!localStorage.getItem('guided_claude_key')) {
+  if (!localStorage.getItem('guided_supabase_url')) {
     document.getElementById('setup-screen').style.display = 'flex';
   } else {
     document.getElementById('login-screen').style.display = 'flex';
@@ -7532,7 +7522,7 @@ function showLoginFromLanding() {
 // ── For Schools path: landing → school screen directly ───
 function showSchoolFromLanding() {
   document.getElementById('landing').style.display = 'none';
-  if (!localStorage.getItem('guided_claude_key')) {
+  if (!localStorage.getItem('guided_supabase_url')) {
     // Need keys first, then go to school screen
     document.getElementById('setup-screen').style.display = 'flex';
     // After saving keys, go to school screen instead of login
@@ -7549,7 +7539,7 @@ function showLandingFromSchool() {
 
 function showFamilyFromLanding() {
   document.getElementById('landing').style.display = 'none';
-  if (!localStorage.getItem('guided_claude_key')) {
+  if (!localStorage.getItem('guided_supabase_url')) {
     window._pendingFamily = true;
     document.getElementById('setup-screen').style.display = 'flex';
   } else {
@@ -7599,7 +7589,7 @@ function goHome() {
 
 function showSignInFromLanding() {
   document.getElementById('landing').style.display = 'none';
-  if (!localStorage.getItem('guided_claude_key')) {
+  if (!localStorage.getItem('guided_supabase_url')) {
     window._pendingSignin = true;
     document.getElementById('setup-screen').style.display = 'flex';
   } else {
