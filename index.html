@@ -3032,6 +3032,12 @@ body { background: #FFFFFF; }
         <label style="font-size:10.5px;font-weight:700;letter-spacing:1.8px;text-transform:uppercase;color:var(--ink4)">Supabase Anon Key <span style="color:var(--ink5);font-weight:400;text-transform:none;letter-spacing:0">(optional)</span></label>
         <input class="fi" id="setup-sb-key" type="password" placeholder="eyJ..." autocomplete="off" spellcheck="false"/>
       </div>
+      <div style="height:1px;background:var(--border);margin:4px 0 18px"></div>
+      <div style="font-size:10.5px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--forest-green,#2d6a4f);margin-bottom:14px">School Connection (Slack)</div>
+      <div class="fgroup" style="margin-bottom:24px">
+        <label style="font-size:10.5px;font-weight:700;letter-spacing:1.8px;text-transform:uppercase;color:var(--ink4)">Slack Bot Token <span style="color:var(--ink5);font-weight:400;text-transform:none;letter-spacing:0">(optional — for class content)</span></label>
+        <input class="fi" id="setup-slack-token" type="password" placeholder="xoxb-..." autocomplete="off" spellcheck="false"/>
+      </div>
       <button class="btn-next" style="width:100%" onclick="saveSetup()">Save & Continue →</button>
     </div>
     <div style="text-align:center;margin-top:16px">
@@ -4390,6 +4396,7 @@ body { background: #FFFFFF; }
           </button>
         </div>
       </div>
+      <div id="msg-remaining" style="font-size:10px;color:var(--ink4);text-align:center;padding:2px 0;font-family:'Plus Jakarta Sans',sans-serif"></div>
       <div class="chat-disclaimer"><span class="chat-powered">✦ Powered by Anthropic</span> · Guided can make mistakes. <button class="chat-disclaimer-link" onclick="openLegal()">Learn more</button></div>
     </div>
 
@@ -4544,6 +4551,7 @@ let EL_KEY        = localStorage.getItem('guided_elevenlabs_key')  || '';
 let ND_KEY        = localStorage.getItem('guided_needle_key')       || '';
 let SUPABASE_URL  = localStorage.getItem('guided_supabase_url')    || '';
 let SUPABASE_KEY  = localStorage.getItem('guided_supabase_key')    || '';
+let SLACK_TOKEN   = localStorage.getItem('guided_slack_token')     || '';
 
 // ══════════════════════════════════════════════
 //  SUPABASE CLIENT
@@ -4559,7 +4567,63 @@ initSupabase();
 // ══════════════════════════════════════════════
 //  CONFIG
 // ══════════════════════════════════════════════
-const CLAUDE_MODEL = 'claude-sonnet-4-20250514';
+// ── Model Routing ──
+const MODELS = {
+  haiku:  'claude-haiku-4-5-20251001',
+  sonnet: 'claude-sonnet-4-20250514',
+  opus:   'claude-opus-4-20250514'
+};
+const MODEL_LABELS = {
+  'claude-haiku-4-5-20251001': 'Haiku 4.5',
+  'claude-sonnet-4-20250514':  'Sonnet 4.5',
+  'claude-opus-4-20250514':    'Opus 4'
+};
+
+function pickModel(isHint = false) {
+  if (isHint) return MODELS.haiku;
+  const lastBloom = S.events.filter(e => e.bloom && e.who === 'tutor').pop()?.bloom || null;
+  if (!lastBloom) return MODELS.haiku;
+  const isAdvanced = S.abitur || (S.subj || '').toLowerCase().includes('lk') || (S.lk?.length > 0);
+  switch (lastBloom) {
+    case 'remember':
+    case 'understand':  return MODELS.haiku;
+    case 'apply':
+    case 'analyze':     return MODELS.sonnet;
+    case 'evaluate':
+    case 'create':      return isAdvanced ? MODELS.opus : MODELS.sonnet;
+    default:            return MODELS.sonnet;
+  }
+}
+
+// ── Daily Message Limit ──
+const MAX_DAILY_MESSAGES = 100;
+const DAILY_WARNING_AT   = 80;
+
+function getDailyMessageCount() {
+  const key = 'guided_daily_' + new Date().toISOString().split('T')[0];
+  return parseInt(localStorage.getItem(key) || '0', 10);
+}
+
+function incrementDailyMessageCount() {
+  const today = new Date().toISOString().split('T')[0];
+  const key = 'guided_daily_' + today;
+  const count = getDailyMessageCount() + 1;
+  localStorage.setItem(key, String(count));
+  // Clean up old days
+  for (let i = localStorage.length - 1; i >= 0; i--) {
+    const k = localStorage.key(i);
+    if (k && k.startsWith('guided_daily_') && k !== key) localStorage.removeItem(k);
+  }
+  return count;
+}
+
+function checkDailyLimit() {
+  const count = getDailyMessageCount();
+  if (count >= MAX_DAILY_MESSAGES) return { allowed: false, remaining: 0, count };
+  if (count >= DAILY_WARNING_AT)   return { allowed: true, remaining: MAX_DAILY_MESSAGES - count, count, warning: true };
+  return { allowed: true, remaining: MAX_DAILY_MESSAGES - count, count, warning: false };
+}
+
 const MAX_TOK  = 600;
 const TEMP     = 0.75;
 const CTX_WIN  = 8000;
@@ -4586,6 +4650,10 @@ const S = {
   // Bloom's taxonomy tracking
   bloom: { remember:0, understand:0, apply:0, analyze:0, evaluate:0, create:0 },
   bloomTotal: 0,
+  slackChannels: [],        // available channels from school Slack
+  selectedChannels: [],     // channel IDs the student selected
+  schoolConnected: false,   // whether a school code was validated
+  schoolName: '',           // for display
 };
 
 // ══════════════════════════════════════════════
@@ -4973,6 +5041,11 @@ function obStudentBack() {
 function obStudentNext() {
   if (obStudentStep === 1 && !document.getElementById('obs-name').value.trim()) { toast('Enter your name', 'err'); return; }
   if (obStudentStep === 4) { launchStudent(); return; }
+  // After step 2 (subjects): show school connect modal if Slack is configured
+  if (obStudentStep === 2 && SLACK_TOKEN) {
+    showSchoolConnectModal();
+    return; // Modal handles step progression via confirmClassSelection() or skipSchoolConnect()
+  }
   obStudentStep++; renderObStudent();
 }
 function renderObStudent() {
@@ -5263,7 +5336,7 @@ function startAppSession() {
   document.getElementById('d-goal').textContent    = S.goal || '—';
   document.getElementById('d-notes').textContent   = S.notes || '—';
   document.getElementById('d-conf').textContent    = `${TEMP} / ${MAX_TOK}`;
-  document.getElementById('d-model').textContent   = `Claude · ${CLAUDE_MODEL}`;
+  document.getElementById('d-model').textContent   = `Claude · Smart Routing`;
   document.getElementById('d-updates').textContent = S.parentUpdates || '—';
   const styleLabels = { socratic:'Socratic Guide', stepbystep:'Step by Step', friendly:'Warm & Patient', challenge:'Challenge Mode' };
   document.getElementById('d-style').textContent = styleLabels[S.style] || S.style || '—';
@@ -5277,6 +5350,12 @@ function startAppSession() {
   }
 
   buildStarters();
+  // Slack class content for connected students
+  if (SLACK_TOKEN && S.selectedChannels.length && !S.lessonContext) {
+    fetchSlackClassContent().then(ctx => {
+      if (ctx) { S.lessonContext = ctx; toast('📚 School content loaded', 'ok'); }
+    }).catch(e => console.warn('Slack load:', e));
+  }
   if (S.abitur && S.bundesland && S.bundesland !== 'Other') {
     const lkLabel = S.lk.length ? S.lk.join(' & ') : S.bundesland;
     toast(`Loading Abitur exam topics: ${lkLabel} (${S.bundesland})...`, 'ok');
@@ -5290,6 +5369,11 @@ function startAppSession() {
   }
 
   document.getElementById('sbtn').disabled = false;
+
+  // Show daily message count
+  const _initLimit = checkDailyLimit();
+  const remEl = document.getElementById('msg-remaining');
+  if (remEl) remEl.textContent = `${_initLimit.remaining} messages left today`;
 
   // Welcome message after short delay
   setTimeout(() => {
@@ -5305,6 +5389,16 @@ function startAppSession() {
 // ══════════════════════════════════════════════
 async function sendMsg(isHint = false, isGotIt = false) {
   if (S.loading) return;
+
+  // Message limit: max 100 student messages per session
+  const userMsgCount = S.events.filter(e => e.who === 'student' && e.type === 'message').length;
+  if (userMsgCount >= 100) {
+    toast('Du hast das Limit von 100 Nachrichten für diese Session erreicht.', 'err');
+    document.getElementById('sbtn').disabled = true;
+    document.getElementById('minput').disabled = true;
+    return;
+  }
+
   const ta = document.getElementById('minput');
   let text = isHint ? '(hint request)' : isGotIt ? '(student says they figured it out — check if correct, celebrate specifically if so)' : ta.value.trim();
 
@@ -5349,7 +5443,7 @@ async function sendMsg(isHint = false, isGotIt = false) {
 
   const t0 = Date.now();
   try {
-    const { reply, usage } = await callLLM(ndCtx);
+    const { reply, usage } = await callLLM(ndCtx, isHint);
     const lat = Date.now() - t0;
     removeTyping(tid);
 
@@ -5388,12 +5482,18 @@ async function sendMsg(isHint = false, isGotIt = false) {
 
   } catch(e) {
     removeTyping(tid);
-    addBubble('ai', '⚠️ Error: ' + e.message);
+    if (e.message === 'daily_limit_reached') {
+      addBubble('ai', `Das war's für heute! Du hast alle ${MAX_DAILY_MESSAGES} Nachrichten aufgebraucht — das heißt, du hast wirklich was geleistet. 💪\n\nDein Fortschritt ist gespeichert. Komm morgen wieder und wir machen weiter wo wir aufgehört haben.\n\n*Tipp: Schau nochmal deine Notizen von heute durch, bevor du schläfst — du wirst überrascht sein, wie viel hängen bleibt.*`);
+      document.getElementById('sbtn').disabled = true;
+      document.getElementById('minput').disabled = true;
+    } else {
+      addBubble('ai', '⚠️ Error: ' + e.message);
+    }
     S.history.pop();
   }
 
   S.loading = false;
-  document.getElementById('sbtn').disabled = false;
+  document.getElementById('sbtn').disabled = !document.getElementById('minput').disabled;
   document.getElementById('minput').focus();
 }
 
@@ -5425,7 +5525,7 @@ async function reqWhyLearn() {
   if (S.ndReady) ndCtx = await srchNeedle('real life application');
   const t0 = Date.now();
   try {
-    const { reply, usage } = await callLLM(ndCtx);
+    const { reply, usage } = await callLLM(ndCtx, false);
     const lat = Date.now() - t0;
     removeTyping(tid);
     const { forHistory, forDisplay } = parseTutorNote(reply.replace(/^\[AHA\]\s*/, ''));
@@ -5446,7 +5546,7 @@ async function reqWhyLearn() {
 // ══════════════════════════════════════════════
 //  CLAUDE API (with prompt caching)
 // ══════════════════════════════════════════════
-async function callClaude(ndCtx) {
+async function callClaude(ndCtx, model) {
   const res = await fetch('https://api.anthropic.com/v1/messages', {
     method: 'POST',
     headers: {
@@ -5457,7 +5557,7 @@ async function callClaude(ndCtx) {
       'anthropic-dangerous-direct-browser-access': 'true'
     },
     body: JSON.stringify({
-      model: CLAUDE_MODEL,
+      model: model || MODELS.sonnet,
       system: [{ type: 'text', text: buildPrompt(ndCtx), cache_control: { type: 'ephemeral' } }],
       messages: S.history,
       max_tokens: MAX_TOK
@@ -5507,10 +5607,31 @@ function maybeCompressHistory() {
 // ══════════════════════════════════════════════
 //  ROUTER
 // ══════════════════════════════════════════════
-async function callLLM(ndCtx) {
+async function callLLM(ndCtx, isHint = false) {
   maybeCompressHistory();
   if (!CLAUDE_KEY) throw new Error('No Claude API key — open Settings to add one.');
-  return callClaude(ndCtx);
+
+  // Check daily limit
+  const limit = checkDailyLimit();
+  if (!limit.allowed) {
+    throw new Error(`daily_limit_reached`);
+  }
+
+  // Pick model based on Bloom level
+  const model = pickModel(isHint);
+  document.getElementById('d-model').textContent = `Claude · ${MODEL_LABELS[model] || model}`;
+
+  if (limit.warning) {
+    toast(`Noch ${limit.remaining} Nachrichten heute — nutz sie gut!`, 'ok');
+  }
+
+  const result = await callClaude(ndCtx, model);
+
+  const newCount = incrementDailyMessageCount();
+  const remEl = document.getElementById('msg-remaining');
+  if (remEl) remEl.textContent = `${MAX_DAILY_MESSAGES - newCount} left today`;
+
+  return result;
 }
 
 // ══════════════════════════════════════════════
@@ -6597,6 +6718,294 @@ async function fetchTodaysLessonContext() {
   } catch(e) { console.warn('lessonContext:', e); return ''; }
 }
 
+// ══════════════════════════════════════════════
+//  SLACK SCHOOL INTEGRATION
+// ══════════════════════════════════════════════
+
+const SLACK_SUBJECT_MAP = {
+  'mathe':'Mathematics','math':'Mathematics','mathematik':'Mathematics',
+  'physik':'Physics','physics':'Physics',
+  'deutsch':'German','german':'German',
+  'englisch':'English','english':'English',
+  'bio':'Biology','biologie':'Biology','biology':'Biology',
+  'chemie':'Chemistry','chemistry':'Chemistry',
+  'geschichte':'History','history':'History',
+  'informatik':'Computer Science','cs':'Computer Science',
+  'kunst':'Art','musik':'Music','music':'Music',
+  'geo':'Geography','geographie':'Geography','geography':'Geography',
+  'philosophie':'Philosophy','philosophy':'Philosophy',
+  'ethik':'Ethics','politik':'Politics',
+  'wirtschaft':'Economics','economics':'Economics',
+  'französisch':'French','french':'French',
+  'spanisch':'Spanish','spanish':'Spanish',
+  'latein':'Latin','latin':'Latin',
+  'schulinfo':'School Info','announcement':'School Info','general':'School Info',
+};
+
+const SCHOOL_WIDE_KEYWORDS = ['schulinfo', 'announcement', 'general', 'allgemein', 'info', 'news'];
+
+function detectSubjectFromChannel(channelName) {
+  const lower = channelName.toLowerCase().replace(/-/g, '');
+  for (const [kw, subj] of Object.entries(SLACK_SUBJECT_MAP)) {
+    if (lower.includes(kw)) return subj;
+  }
+  return null;
+}
+
+function isSchoolWideChannel(channelName) {
+  const lower = channelName.toLowerCase();
+  return SCHOOL_WIDE_KEYWORDS.some(kw => lower.includes(kw));
+}
+
+// Fetch all channels from the school's Slack workspace
+async function fetchSlackChannels() {
+  if (!SLACK_TOKEN) return [];
+  const PROXY = 'https://otprfrhrztfbcksngllb.supabase.co/functions/v1/slack-proxy';
+  try {
+    const res = await fetch(PROXY, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ endpoint: 'conversations.list?types=public_channel&limit=200', token: SLACK_TOKEN })
+    });
+    const data = await res.json();
+    if (!data.ok) { console.warn('Slack channels error:', data.error); return []; }
+    return data.channels
+      .filter(ch => !ch.is_archived)
+      .map(ch => ({
+        id: ch.id,
+        name: ch.name,
+        subject: detectSubjectFromChannel(ch.name),
+        isSchoolWide: isSchoolWideChannel(ch.name),
+        memberCount: ch.num_members || 0
+      }))
+      .filter(ch => ch.subject !== null || ch.isSchoolWide);
+  } catch(e) {
+    console.error('Slack fetch error:', e);
+    return [];
+  }
+}
+
+// Fetch messages ONLY from student's selected channels + school-wide channels
+async function fetchSlackClassContent() {
+  if (!SLACK_TOKEN || !S.selectedChannels.length) return '';
+
+  const PROXY = 'https://otprfrhrztfbcksngllb.supabase.co/functions/v1/slack-proxy';
+
+  // Always include school-wide channels
+  const schoolWideIds = S.slackChannels
+    .filter(ch => ch.isSchoolWide)
+    .map(ch => ch.id);
+  const allChannelIds = [...new Set([...S.selectedChannels, ...schoolWideIds])];
+
+  const channelMap = {};
+  S.slackChannels.forEach(ch => { channelMap[ch.id] = ch; });
+
+  const since = Math.floor((Date.now() - 24 * 60 * 60 * 1000) / 1000);
+  let entries = [];
+
+  for (const chId of allChannelIds) {
+    const ch = channelMap[chId];
+    if (!ch) continue;
+    try {
+      const res = await fetch(PROXY, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ endpoint: `conversations.history?channel=${chId}&oldest=${since}&limit=10`, token: SLACK_TOKEN })
+      });
+      const data = await res.json();
+      if (!data.ok) continue;
+
+      for (const msg of (data.messages || [])) {
+        if (msg.subtype || !msg.text || msg.text.length < 15) continue;
+
+        let teacher = 'Teacher';
+        try {
+          const uRes = await fetch(PROXY, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ endpoint: `users.info?user=${msg.user}`, token: SLACK_TOKEN })
+          });
+          const uData = await uRes.json();
+          if (uData.ok) teacher = uData.user.real_name || uData.user.name || 'Teacher';
+        } catch(e) {}
+
+        const fileInfo = (msg.files && msg.files.length)
+          ? ' [Attached: ' + msg.files.map(f => f.name || f.title).join(', ') + ']'
+          : '';
+
+        entries.push({
+          subject: ch.subject || 'School Info',
+          channel: ch.name,
+          teacher,
+          text: msg.text.slice(0, 500) + fileInfo,
+          ts: parseFloat(msg.ts),
+          isSchoolWide: ch.isSchoolWide
+        });
+      }
+    } catch(e) { console.warn('Slack channel error:', e); }
+  }
+
+  if (!entries.length) return '';
+
+  entries.sort((a, b) => b.ts - a.ts);
+  entries = entries.slice(0, 8);
+
+  const schoolWide = entries.filter(e => e.isSchoolWide);
+  const classSpecific = entries.filter(e => !e.isSchoolWide);
+
+  let ctx = '\n━━━━━━━━━━━━━━━━━━━━━━━━\nSCHOOL CONTEXT — TODAY\'S CLASS CONTENT\n━━━━━━━━━━━━━━━━━━━━━━━━\n';
+
+  if (classSpecific.length) {
+    classSpecific.forEach(e => {
+      ctx += `📅 ${e.subject} (${e.teacher}, #${e.channel}):\n   ${e.text}\n\n`;
+    });
+  }
+
+  if (schoolWide.length) {
+    ctx += '📢 SCHOOL-WIDE ANNOUNCEMENTS:\n';
+    schoolWide.forEach(e => {
+      ctx += `   ${e.teacher}: ${e.text}\n\n`;
+    });
+  }
+
+  ctx += `IMPORTANT: Use this context to ask specific questions about what ${S.name} actually learned today. Reference exact homework assignments, page numbers, and topics. If they ask about homework, you know exactly what was assigned. School-wide announcements give you context about upcoming exams or events.\n`;
+  return ctx;
+}
+
+// Validate school code and load Slack channels for class selection
+async function validateSchoolCode(code) {
+  if (!code || !SLACK_TOKEN) return { valid: false, channels: [] };
+  const channels = await fetchSlackChannels();
+  if (!channels.length) return { valid: false, channels: [] };
+  return {
+    valid: true,
+    schoolName: 'BCS Demo (' + code + ')',
+    channels: channels
+  };
+}
+
+// ── School Connect Modal Logic ───────────────────────────
+async function validateSchoolCodeUI() {
+  const code = document.getElementById('scm-code-input').value.trim().toUpperCase();
+  const errEl = document.getElementById('scm-code-error');
+  errEl.style.display = 'none';
+
+  if (!code) { errEl.textContent = 'Please enter a school code'; errEl.style.display = 'block'; return; }
+  if (!SLACK_TOKEN) { errEl.textContent = 'School connection not configured (missing Slack token in setup)'; errEl.style.display = 'block'; return; }
+
+  toast('Verifying school code...', 'ok');
+  const result = await validateSchoolCode(code);
+
+  if (!result.valid) {
+    errEl.textContent = 'Could not connect — no class channels found';
+    errEl.style.display = 'block';
+    return;
+  }
+
+  S.slackChannels = result.channels;
+  S.schoolConnected = true;
+  S.schoolName = result.schoolName;
+  S.school = result.schoolName;
+
+  const listEl = document.getElementById('scm-class-list');
+  const schoolWideEl = document.getElementById('scm-school-wide');
+
+  const classChannels = result.channels.filter(ch => !ch.isSchoolWide);
+  const schoolWideChannels = result.channels.filter(ch => ch.isSchoolWide);
+
+  listEl.innerHTML = classChannels.map(ch => `
+    <div class="scm-class-chip" data-id="${ch.id}" onclick="this.classList.toggle('sel')" style="display:flex;align-items:center;gap:10px;padding:10px 14px;border:1.5px solid var(--border);border-radius:10px;cursor:pointer;transition:all .15s;font-family:'Plus Jakarta Sans',sans-serif">
+      <div class="scm-check" style="width:20px;height:20px;border-radius:50%;border:1.5px solid var(--border2);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:11px;transition:all .15s">✓</div>
+      <div style="flex:1">
+        <div style="font-weight:600;font-size:13px;color:var(--ink)">${ch.subject}</div>
+        <div style="font-size:11px;color:var(--ink4)">#${ch.name}</div>
+      </div>
+    </div>
+  `).join('');
+
+  if (!document.getElementById('scm-styles')) {
+    const style = document.createElement('style');
+    style.id = 'scm-styles';
+    style.textContent = `
+      .scm-class-chip.sel { border-color: var(--forest) !important; background: var(--aha-bg); }
+      .scm-class-chip.sel .scm-check { background: var(--forest); border-color: var(--forest); color: #fff; }
+      .scm-class-chip:not(.sel) .scm-check { color: transparent; }
+      .scm-class-chip:hover { border-color: var(--border2); background: var(--cream); }
+    `;
+    document.head.appendChild(style);
+  }
+
+  if (schoolWideChannels.length) {
+    schoolWideEl.innerHTML = `
+      <div style="font-size:10.5px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--ink4);margin-bottom:6px">Always included</div>
+      ${schoolWideChannels.map(ch => `
+        <div style="display:flex;align-items:center;gap:10px;padding:8px 14px;background:var(--hint-bg);border:1px solid var(--hint-bdr);border-radius:10px;font-family:'Plus Jakarta Sans',sans-serif">
+          <div style="width:20px;height:20px;border-radius:50%;background:var(--gold);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:11px;color:#fff">✓</div>
+          <div style="flex:1">
+            <div style="font-weight:600;font-size:12px;color:var(--gold)">School Announcements</div>
+            <div style="font-size:11px;color:var(--ink4)">#${ch.name}</div>
+          </div>
+        </div>
+      `).join('')}
+    `;
+  } else {
+    schoolWideEl.innerHTML = '';
+  }
+
+  const abbr = code.replace(/[^A-Z]/g, '').slice(0, 3) || code.slice(0, 3);
+  document.getElementById('scm-school-icon').textContent = abbr;
+  document.getElementById('scm-school-name').textContent = result.schoolName;
+
+  document.getElementById('scm-code-phase').style.display = 'none';
+  document.getElementById('scm-classes-phase').style.display = 'block';
+}
+
+function confirmClassSelection() {
+  const selected = [...document.querySelectorAll('.scm-class-chip.sel')].map(el => el.dataset.id);
+
+  if (!selected.length) {
+    toast('Pick at least one class', 'err');
+    return;
+  }
+
+  S.selectedChannels = selected;
+
+  const selectedSubjects = S.slackChannels
+    .filter(ch => selected.includes(ch.id))
+    .map(ch => ch.subject)
+    .filter(Boolean);
+  if (selectedSubjects.length) {
+    S.subj = selectedSubjects.join(', ');
+  }
+
+  document.getElementById('school-connect-modal').style.display = 'none';
+  toast(`📚 ${selected.length} classes connected`, 'ok');
+
+  fetchSlackClassContent().then(ctx => {
+    if (ctx) { S.lessonContext = ctx; toast('📚 Today\'s class content loaded', 'ok'); }
+  }).catch(e => console.warn('Slack content load:', e));
+
+  obStudentStep++;
+  renderObStudent();
+}
+
+function skipSchoolConnect() {
+  document.getElementById('school-connect-modal').style.display = 'none';
+  S.schoolConnected = false;
+  S.selectedChannels = [];
+  obStudentStep++;
+  renderObStudent();
+}
+
+function showSchoolConnectModal() {
+  document.getElementById('scm-code-phase').style.display = 'block';
+  document.getElementById('scm-classes-phase').style.display = 'none';
+  document.getElementById('scm-code-input').value = '';
+  document.getElementById('scm-code-error').style.display = 'none';
+  document.getElementById('scm-class-list').innerHTML = '';
+  document.getElementById('school-connect-modal').style.display = 'flex';
+}
+
 // ── Analytics ────────────────────────────────────────────
 async function loadAnalyticsClassOptions() {
   if (!SB) return;
@@ -6696,6 +7105,14 @@ async function launchAsSchoolStudent(student) {
   S.goal = goalMap[S.learningGoal] || '';
 
   try { S.lessonContext = await fetchTodaysLessonContext(); } catch(e) { S.lessonContext = ''; }
+  // Slack fallback: wenn kein Supabase-Kontext, versuche Slack
+  if (!S.lessonContext && SLACK_TOKEN && S.selectedChannels.length) {
+    try {
+      toast('Loading class content from Slack...', 'ok');
+      S.lessonContext = await fetchSlackClassContent();
+      if (S.lessonContext) toast('📚 School content loaded', 'ok');
+    } catch(e) { console.warn('Slack fallback:', e); }
+  }
 
   // Load learning profile from past sessions + handover notes
   S.aiNotes = student.ai_notes || '';
@@ -6713,7 +7130,7 @@ async function launchAsSchoolStudent(student) {
   document.getElementById('d-goal').textContent    = S.goal || '—';
   document.getElementById('d-notes').textContent   = S.notes || '—';
   document.getElementById('d-conf').textContent    = `${TEMP} / ${MAX_TOK}`;
-  document.getElementById('d-model').textContent   = `Claude · ${CLAUDE_MODEL}`;
+  document.getElementById('d-model').textContent   = `Claude · Smart Routing`;
   document.getElementById('d-updates').textContent = S.parentUpdates;
 
   const styleLabels = {socratic:'Socratic Guide',stepbystep:'Step by Step',friendly:'Warm & Patient',challenge:'Challenge Mode'};
@@ -6721,6 +7138,11 @@ async function launchAsSchoolStudent(student) {
 
   buildStarters();
   document.getElementById('sbtn').disabled = false;
+
+  // Show daily message count
+  const _schoolLimit = checkDailyLimit();
+  const _schoolRemEl = document.getElementById('msg-remaining');
+  if (_schoolRemEl) _schoolRemEl.textContent = `${_schoolLimit.remaining} messages left today`;
 
   // Auto-load curriculum if school is known
   if (S.school) lookupSchoolGeneric(S.school, 'obs-school-status');
@@ -6957,7 +7379,7 @@ async function handleVoiceInput(text) {
   if (S.ndReady) ndCtx = await srchNeedle(text);
 
   try {
-    const { reply, usage } = await callLLM(ndCtx);
+    const { reply, usage } = await callLLM(ndCtx, false);
     S.loading = false;
 
     S.totTok += usage.total_tokens || 0;
@@ -7066,6 +7488,8 @@ function saveSetup() {
   if (su) { localStorage.setItem('guided_supabase_url', su); SUPABASE_URL = su; }
   const sk = document.getElementById('setup-sb-key').value.trim();
   if (sk) { localStorage.setItem('guided_supabase_key', sk); SUPABASE_KEY = sk; }
+  const slk = document.getElementById('setup-slack-token').value.trim();
+  if (slk) { localStorage.setItem('guided_slack_token', slk); SLACK_TOKEN = slk; }
   initSupabase();
   document.getElementById('setup-screen').style.display = 'none';
   if (window._pendingSchool) {
@@ -7089,6 +7513,7 @@ function showSetupScreen() {
   document.getElementById('setup-nd-key').value = ND_KEY;
   document.getElementById('setup-sb-url').value = SUPABASE_URL;
   document.getElementById('setup-sb-key').value = SUPABASE_KEY;
+  document.getElementById('setup-slack-token').value = SLACK_TOKEN;
   document.getElementById('login-screen').style.display = 'none';
   document.getElementById('school-screen').style.display = 'none';
   document.getElementById('setup-screen').style.display = 'flex';
@@ -7463,5 +7888,50 @@ document.addEventListener('keydown', e => {
   if (e.altKey && e.code === 'KeyD') toggleDev();
 });
 </script>
+<!-- School Connection Modal (shown between step 2 and 3 during student onboarding) -->
+<div id="school-connect-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:500;align-items:center;justify-content:center;padding:24px">
+  <div style="background:var(--white);border-radius:24px;padding:32px;max-width:480px;width:100%;max-height:85vh;overflow-y:auto;box-shadow:var(--shadow-lg)">
+
+    <!-- Phase 1: Enter code -->
+    <div id="scm-code-phase">
+      <div style="text-align:center;margin-bottom:20px">
+        <div style="font-size:28px;margin-bottom:8px">🏫</div>
+        <div style="font-size:18px;font-weight:700;color:var(--ink)">Is your school connected?</div>
+        <div style="font-size:13px;color:var(--ink3);margin-top:6px;line-height:1.5">Enter your school code to get tutoring based on your actual classes. No code? No problem — just skip.</div>
+      </div>
+      <div class="fgroup">
+        <input class="fi" id="scm-code-input" placeholder="e.g. BCS-2026" style="text-align:center;font-size:18px;letter-spacing:4px;font-weight:700;text-transform:uppercase" onkeydown="if(event.key==='Enter')validateSchoolCodeUI()"/>
+      </div>
+      <div id="scm-code-error" style="display:none;color:var(--red);font-size:12px;text-align:center;margin-top:6px"></div>
+      <button class="btn-next" style="width:100%;margin-top:12px" onclick="validateSchoolCodeUI()">Connect School →</button>
+      <button onclick="skipSchoolConnect()" style="display:block;margin:14px auto 0;background:none;border:none;color:var(--ink4);font-size:13px;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif">Skip — use Guided without school</button>
+    </div>
+
+    <!-- Phase 2: Pick classes -->
+    <div id="scm-classes-phase" style="display:none">
+      <div style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--aha-bg);border:1px solid var(--aha-bdr);border-radius:12px;margin-bottom:16px">
+        <div style="width:36px;height:36px;border-radius:10px;background:var(--forest);display:flex;align-items:center;justify-content:center;color:#fff;font-size:12px;font-weight:700;flex-shrink:0" id="scm-school-icon">BCS</div>
+        <div>
+          <div style="font-weight:600;font-size:13px;color:var(--forest)" id="scm-school-name">School Name</div>
+          <div style="font-size:11px;color:var(--forest2)">KI-kompatible Schule ✓</div>
+        </div>
+      </div>
+
+      <div style="font-size:14px;font-weight:600;color:var(--ink);margin-bottom:4px">Select your classes</div>
+      <div style="font-size:12px;color:var(--ink3);margin-bottom:12px">Pick the ones you're enrolled in. Content from these classes will personalize your tutor.</div>
+
+      <div id="scm-class-list" style="display:flex;flex-direction:column;gap:6px;margin-bottom:16px">
+        <!-- Filled dynamically -->
+      </div>
+
+      <div id="scm-school-wide" style="margin-bottom:16px">
+        <!-- School-wide channels shown here, auto-selected -->
+      </div>
+
+      <button class="btn-next" style="width:100%" onclick="confirmClassSelection()">Start Learning →</button>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>
